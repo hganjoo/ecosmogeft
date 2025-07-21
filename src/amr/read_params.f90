@@ -134,7 +134,7 @@ subroutine read_params
   rewind(1)
 
 !write(*,'(" EFT params alphaB0 = ",F6.3," alphaM0 = ",F6.3)')alphaB0,alphaM0
-write(*,'(" EFT params alphaB0 = ",F6.3," alphaM0 = ",F6.3," w0 = ",F6.3," wa = ",F6.3," npre = ",I3," npost = ",I3)') alphaB0, alphaM0, w0, wa, npre, npost
+if (myid==1) write(*,'(" EFT params alphaB0 = ",F6.3," alphaM0 = ",F6.3," w0 = ",F6.3," wa = ",F6.3," npre = ",I3," npost = ",I3)') alphaB0, alphaM0, w0, wa, npre, npost
 
   !-------------------------------------------------
   ! Compute time step for outputs
