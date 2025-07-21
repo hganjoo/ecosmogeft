@@ -428,7 +428,7 @@ recursive subroutine recursive_multigrid_coarse_extradof(ifinelevel,isf,safe)
 
       ! Post-smoothing
       !do i=1,ngs_fine_extradof_pst
-      do = i=1,npost
+      do i=1,npost
          call gauss_seidel_mg_coarse_extradof(ifinelevel,isf,safe,.true.)
          call make_virtual_mg_dp(1,ifinelevel)
          call gauss_seidel_mg_coarse_extradof(ifinelevel,isf,safe,.false.)
