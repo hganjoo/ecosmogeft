@@ -127,7 +127,8 @@ subroutine multigrid_fine_extradof(ilevel,icount,isf)
    main_iteration_loop: do
       iter=iter+1
       ! Pre-smoothing
-      do i=1,ngs_fine_extradof_pre
+      !do i=1,ngs_fine_extradof_pre
+      do i=1,npre
          call gauss_seidel_mg_fine_extradof(ilevel,isf,.true.)
          !if (verbose) write(*,*) "Entering GS Red..."
          if(isf.eq.1) then
@@ -194,7 +195,8 @@ subroutine multigrid_fine_extradof(ilevel,icount,isf)
       end if
 
       ! Post-smoothing
-      do i=1,ngs_fine_extradof_pst
+      !do i=1,ngs_fine_extradof_pst
+      do i=1,npost
          call gauss_seidel_mg_fine_extradof(ilevel,isf,.true.)
          if(isf.eq.1) then
             call make_virtual_fine_dp(sf (1      ),ilevel)
@@ -361,7 +363,8 @@ recursive subroutine recursive_multigrid_coarse_extradof(ifinelevel,isf,safe)
 
    if(ifinelevel<=levelmin_mg) then
       if(ifinelevel<levelmin_mg) return
-      do i=1,ngs_fine_extradof_pst
+      !do i=1,ngs_fine_extradof_pst
+      do i=1,npost
          call gauss_seidel_mg_coarse_extradof(ifinelevel,isf,safe,.true.)
          call make_virtual_mg_dp(1,ifinelevel)
          call gauss_seidel_mg_coarse_extradof(ifinelevel,isf,safe,.false.)
@@ -379,7 +382,8 @@ recursive subroutine recursive_multigrid_coarse_extradof(ifinelevel,isf,safe)
 
    do icycle=1,ncycle
       ! Pre-smoothing
-      do i=1,ngs_fine_extradof_pre
+      !do i=1,ngs_fine_extradof_pre
+      do i=1,npre
          call gauss_seidel_mg_coarse_extradof(ifinelevel,isf,safe,.true.)
          call make_virtual_mg_dp(1,ifinelevel)
          call gauss_seidel_mg_coarse_extradof(ifinelevel,isf,safe,.false.)
@@ -423,7 +427,8 @@ recursive subroutine recursive_multigrid_coarse_extradof(ifinelevel,isf,safe)
       call make_virtual_mg_dp(1,ifinelevel)
 
       ! Post-smoothing
-      do i=1,ngs_fine_extradof_pst
+      !do i=1,ngs_fine_extradof_pst
+      do = i=1,npost
          call gauss_seidel_mg_coarse_extradof(ifinelevel,isf,safe,.true.)
          call make_virtual_mg_dp(1,ifinelevel)
          call gauss_seidel_mg_coarse_extradof(ifinelevel,isf,safe,.false.)
