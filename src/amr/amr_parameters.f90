@@ -144,6 +144,8 @@ module amr_parameters
   real(dp) :: alphaM0 = 0.0
   integer :: npre = 5
   integer :: npost = 5
+  real(dp) :: w0 = -1.0
+  real(dp) :: wa = 0.0
 
   logical ::self_shielding=.false.
   logical ::pressure_fix=.false.

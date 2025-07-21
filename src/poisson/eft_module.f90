@@ -24,8 +24,8 @@ contains
     !real(dp), dimension(100) :: integrand
     
 
-    real(dp) :: w0 = -1.0_dp
-    real(dp) :: wa = 0.0_dp
+    !real(dp) :: w0 = -1.0_dp
+    !real(dp) :: wa = 0.0_dp
 
     ! Step 1: E(a)
     evt = aexp**(-3.0_dp * (1.0_dp + w0 + wa)) * exp(-3.0_dp * wa * (1.0_dp - aexp))
