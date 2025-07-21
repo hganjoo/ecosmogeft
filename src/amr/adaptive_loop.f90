@@ -89,20 +89,9 @@ subroutine adaptive_loop
         call compute_eft_quantities()
 
         ! Print results
-         print *, 'EFT outputs at a =', aexp
-         print *, '-------------------------'
-         print *, 'alphaB =', alphaB
-         print *, 'alphaM =', alphaM
-         print *, 'C2     =', C2
-         print *, 'C4     =', C4
-         print *, 'Ia     =', Ia
-         print *, 'E      =', Hv
-         print *, 'pv      =', pv
-         print *, 'qv      =', qv
-         print *, 'rv      =', rv
-         print *, 'pv/rv     =', pv/rv
-         print *, 'mu_phi     =', mu_phi
-         print *, 'xi,nu     =', xiv,nuv
+         if (myid==1) print '(A,F6.3,A,5F9.4)', 'EFT at a = ', aexp, ': alphaB, alphaM, C2, C4, mu_phi = ', alphaB, alphaM, C2, C4, mu_phi
+
+         
 
 
 
