@@ -16,6 +16,7 @@ module extradof_commons
   !       bf_src3 : nabla^2\chi\nabdla_i\nabla^2\chi
   !       bf_src4 : nabla_j\chi\nabla_i\nabdla_j\nabla^2\chi
   real(dp),allocatable,dimension(:)   :: sf
+  real(dp),allocatable,dimension(:)   :: psi
   real(dp)                            :: sf_src_mean
   real(dp),dimension(1:4)             :: sf_src_mean2
   real(dp),allocatable,dimension(:)   :: sf_src
