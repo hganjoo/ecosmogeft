@@ -373,8 +373,8 @@ subroutine sync(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
            ! cv-Galileon (add fifth force to the total force if appropriate)
            if(extradof .and. extradof2 .and. .not.extradof3) then
               ! full
-              f1         = f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim)  !Chr 30/03/20
-              ff(j,idim) = ff(j,idim) + Ia*f1*vol(j,ind)
+              f1         = Ia*f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim)  !Chr 30/03/20
+              ff(j,idim) = ff(j,idim) + f1*vol(j,ind)
            else if(.not.extradof .and. extradof2 .and. extradof3) then
               ! linearized
               ! \nabla^2\Phi = \Omega_m*a*\rho*(1 + \alpha/\beta)
@@ -764,8 +764,8 @@ subroutine sync2(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
            ! cv-Galileon (add fifth force to the total force if appropriate)
            if(extradof .and. extradof2 .and. .not.extradof3) then
               ! full case
-              f1         = f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim)  !Chr 30/03/20
-              ff(j,idim) = ff(j,idim) + Ia*f1*vol(j,ind)
+              f1         = Ia*f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim)  !Chr 30/03/20
+              ff(j,idim) = ff(j,idim) + f1*vol(j,ind)
            else if(.not.extradof .and. extradof2 .and. extradof3) then
               ! linearized case
               ! \nabla^2\Phi = \Omega_m*a*\rho*(1 + \alpha/\beta)

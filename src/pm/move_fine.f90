@@ -369,8 +369,8 @@ subroutine move1(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
               ! cv-Galileon (add fifth force to the total force if appropriate)
               if(extradof .and. extradof2 .and. .not.extradof3) then
                  ! full case
-                 f1         = f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim)  !Chr 30/03/20
-                 ff(j,idim) = ff(j,idim) + Ia*f1*vol(j,ind)
+                 f1         = Ia*f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim)  !Chr 30/03/20
+                 ff(j,idim) = ff(j,idim) + f1*vol(j,ind)
               else if(.not.extradof .and. extradof2 .and. extradof3) then
                  ! linearized case
                  ! \nabla^2\Phi = \Omega_m*a*\rho*(1 + \alpha/\beta)
@@ -399,6 +399,18 @@ subroutine move1(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
         end do
      endif
   end do
+
+  #ifdef OUTPUT_EXTRADOF_PART
+
+  do ind = 1,twondim
+   do j = 1,np
+      forcep(j,1) = forcep(j,1) + Ia*phi(indp(j, ind))*vol(j, ind)
+      forcep(j,2 + ndim) = forcep(j,2 + ndim) + Ia*(phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))
+      forcep(j,6 + ndim) = forcep(j,6 + ndim) + Ia*(phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))
+   
+   end do
+   end do
+#endif
 
   ! For sink cloud particle only
   if(sink)then
@@ -438,12 +450,7 @@ subroutine move1(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
      end do
   end do
 
-  #ifdef OUTPUT_EXTRADOF_PART
-
-  do ind = 1,twondim
-   do j = 1,np
-      forcep(j,1) = forcep(j,1) + Ia*phi(indp(j, ind))*vol(j, ind)
-      forcep(j,1 + ndim) = forcep(j,1 + ndim) + Ia*(phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))
+  
 
 end subroutine move1
 
@@ -774,8 +781,8 @@ subroutine move2(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
               ! cv-Galileon (add fifth force to the total force if appropriate)
               if(extradof .and. extradof2 .and. .not.extradof3) then
                  ! full
-                 f1         = f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim)  !Chr 30/03/20
-                 ff(j,idim) = ff(j,idim) + Ia*f1*vol(j,ind)
+                 f1         = Ia*f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim)  !Chr 30/03/20
+                 ff(j,idim) = ff(j,idim) + f1*vol(j,ind)
               else if(.not.extradof .and. extradof2 .and. extradof3) then
                  ! linearized
                  ! \nabla^2\Phi = \Omega_m*a*\rho*(1 + \alpha/\beta)
