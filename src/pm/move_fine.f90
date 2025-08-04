@@ -400,16 +400,23 @@ subroutine move1(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
      endif
   end do
 
-  #ifdef OUTPUT_EXTRADOF_PART
+#ifdef OUTPUT_EXTRADOF_PART
 
-  do ind = 1,twondim
+  do ind = 1,twotondim
    do j = 1,np
-      forcep(j,1) = forcep(j,1) + Ia*phi(indp(j, ind))*vol(j, ind)
-      forcep(j,2 + ndim) = forcep(j,2 + ndim) + Ia*(phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))
-      forcep(j,6 + ndim) = forcep(j,6 + ndim) + Ia*(phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))
-   
+      forcep(j,1) = forcep(j,1) + Ia*phi(indp(j, ind))*vol(j, ind) !phi
+      forcep(j,2 + ndim) = forcep(j,2 + ndim) + (Ia*phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))*vol(j,ind) !psi
+      forcep(j,6 + ndim) = forcep(j,6 + ndim) + (Ia*phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))*vol(j,ind) !chi
+
+      do idim=1,ndim
+         forcep(j,idim+1) = forcep(j,idim+1) + Ia*f(indp(j,ind),idim)*vol(j,ind) !grad phi without fifth force (lapinv source)
+         forcep(j,idim+5) = forcep(j,idim+4) + (Ia*f(indp(j,ind)) + alphaB*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad psi
+         forcep(j,idim+9) = forcep(j,idim+6) + Ia*f(indp(j,ind)) + ((alphaB-alphaM)*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad chi
+      end do
+      
    end do
    end do
+
 #endif
 
   ! For sink cloud particle only
@@ -809,6 +816,25 @@ subroutine move2(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
         end do
      endif
   end do
+
+  #ifdef OUTPUT_EXTRADOF_PART
+
+  do ind = 1,threetondim
+   do j = 1,np
+      forcep(j,1) = forcep(j,1) + Ia*phi(indp(j, ind))*vol(j, ind) !phi
+      forcep(j,2 + ndim) = forcep(j,2 + ndim) + (Ia*phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))*vol(j,ind) !psi
+      forcep(j,6 + ndim) = forcep(j,6 + ndim) + (Ia*phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))*vol(j,ind) !chi
+
+      do idim=1,ndim
+         forcep(j,idim+1) = forcep(j,idim+1) + Ia*f(indp(j,ind),idim)*vol(j,ind) !grad phi without fifth force (lapinv source)
+         forcep(j,idim+5) = forcep(j,idim+4) + (Ia*f(indp(j,ind)) + alphaB*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad psi
+         forcep(j,idim+9) = forcep(j,idim+6) + Ia*f(indp(j,ind)) + ((alphaB-alphaM)*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad chi
+      end do
+      
+   end do
+   end do
+
+#endif
 
   ! For sink cloud particle only
   if(sink)then
