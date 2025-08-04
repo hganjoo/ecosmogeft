@@ -438,6 +438,13 @@ subroutine move1(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
      end do
   end do
 
+  #ifdef OUTPUT_EXTRADOF_PART
+
+  do ind = 1,twondim
+   do j = 1,np
+      forcep(j,1) = forcep(j,1) + Ia*phi(indp(j, ind))*vol(j, ind)
+      forcep(j,1 + ndim) = forcep(j,1 + ndim) + Ia*(phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))
+
 end subroutine move1
 
 
