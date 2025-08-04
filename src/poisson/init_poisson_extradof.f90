@@ -43,9 +43,6 @@ subroutine init_poisson_extradof
      allocate(sf      (1:ncell    ))   ! \chi
      allocate(sf_src  (1:ncell    ))   ! \nabla^2\chi
      allocate(sf_grad (1:ncell,1:3))   ! \nabla\chi
-     if(writepsi) then
-      allocate(psi(1:ncell))
-     endif
      if(extradof4) then
         allocate(sf_lp    (1:ncell    ))
         allocate(cbf     (1:ncell, 1:3))

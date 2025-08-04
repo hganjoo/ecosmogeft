@@ -43,7 +43,7 @@ module pm_commons
   integer ,allocatable,dimension(:)  ::prevp    ! Previous particle in list
   integer ,allocatable,dimension(:)  ::levelp   ! Current level of particle
   integer ,allocatable,dimension(:)  ::idp      ! Identity of particle
-  #ifdef OUTPUT_EXTRADOF_PART
+#ifdef OUTPUT_EXTRADOF_PART
    real(dp), allocatable, dimension(:, :)::forcep   ! Forces at part. positions (used to save potentials, fifth force etc.)
 #endif
   ! Tree related arrays
