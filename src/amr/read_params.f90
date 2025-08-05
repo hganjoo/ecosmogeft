@@ -134,8 +134,10 @@ subroutine read_params
   rewind(1)
 
 !write(*,'(" EFT params alphaB0 = ",F6.3," alphaM0 = ",F6.3)')alphaB0,alphaM0
-if (myid==1) write(*,'(" EFT params alphaB0 = ",F6.3," alphaM0 = ",F6.3," w0 = ",F6.3," wa = ",F6.3," npre = ",I3," npost = ",I3)') alphaB0, alphaM0, w0, wa, npre, npost
-
+if (myid==1) write(*,'(" EFT params: alphaB0 = ",F6.3,", alphaM0 = ",F6.3,", w0 = ",F6.3,", wa = ",F6.3,", npre = ",I3,", npost = ",I3)') alphaB0, alphaM0, w0, wa, npre, npost
+#ifdef OUTPUT_EXTRADOF_PART
+if (myid==1) write('EFT full outputs switched on.')
+#endif
   !-------------------------------------------------
   ! Compute time step for outputs
   !-------------------------------------------------
