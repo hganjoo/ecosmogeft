@@ -22,6 +22,7 @@ subroutine backup_extradof_part(filename)
   integer ,allocatable,dimension(:)::ii
   integer ,allocatable,dimension(:)::ll
 
+
   if(.not.extradof) return
 
   if(verbose)write(*,*)'Entering backup_extradof_part'
@@ -29,6 +30,14 @@ subroutine backup_extradof_part(filename)
   ilun=2*ncpu+myid+10
 
   ! Wait for the token
+#ifndef WITHOUTMPI
+  if (IOGROUPSIZE > 0) then
+     if (mod(myid-1, IOGROUPSIZE) /= 0) then
+        call MPI_RECV(dummy_io, 1, MPI_INTEGER, myid-1-1, tag, &
+             & MPI_COMM_WORLD, MPI_STATUS_IGNORE, info2)
+     end if
+  end if
+#endif
 
 
   call title(myid,nchar)
@@ -69,6 +78,15 @@ subroutine backup_part(filename)
   real(dp),allocatable,dimension(:)::xsp
   integer ,allocatable,dimension(:)::ii
   integer ,allocatable,dimension(:)::ll
+
+#ifndef WITHOUTMPI
+  integer :: dummy_io, info2
+  integer, parameter :: tag = 1122
+#endif
+
+#ifndef WITHOUTMPI
+  include 'mpif.h'
+#endif
 
   if(verbose)write(*,*)'Entering backup_part'
   
@@ -239,7 +257,19 @@ subroutine backup_part(filename)
   deallocate(xsp)
 #endif
 
+
   close(ilun)
+
+#ifndef WITHOUTMPI
+  if (IOGROUPSIZE > 0) then
+     if (mod(myid, IOGROUPSIZE) /= 0 .and. (myid .lt. ncpu)) then
+        dummy_io = 1
+        call MPI_SEND(dummy_io, 1, MPI_INTEGER, myid-1+1, tag, &
+             & MPI_COMM_WORLD, info2)
+     end if
+  end if
+#endif
+
 
 
 

@@ -233,4 +233,10 @@ module amr_parameters
   integer ,dimension(1:MAXBOUND)    ::kbound_min=0
   integer ,dimension(1:MAXBOUND)    ::kbound_max=0
 
+  ! IO parameters
+  ! Number of processes sharing one token
+  ! Only one process can write at a time in an I/O group
+  integer::IOGROUPSIZE=16           ! Main snapshot
+
+
 end module amr_parameters
