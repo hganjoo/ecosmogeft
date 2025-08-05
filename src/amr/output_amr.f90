@@ -68,6 +68,10 @@ subroutine dump_all
         filename=TRIM(filedir)//'part_'//TRIM(nchar)//'.out'
         call backup_part(filename)
      end if
+!#ifdef OUTPUT_EXTRADOF_PART
+!      filename = TRIM(filedir)//'force_'//TRIM(nchar)//'.out'
+!      call backup_extradof_part(filename)
+!#endif
      if(poisson)then
         filename=TRIM(filedir)//'grav_'//TRIM(nchar)//'.out'
         call backup_poisson(filename)

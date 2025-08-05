@@ -1,13 +1,72 @@
+#ifdef OUTPUT_EXTRADOF_PART
+subroutine backup_extradof_part(filename)
+  use amr_commons
+  use amr_parameters
+  use pm_commons
+  use poisson_commons
+  use extradof_commons
+  implicit none
+#ifndef WITHOUTMPI
+  include 'mpif.h'
+#endif
+#ifndef WITHOUTMPI
+  integer :: dummy_io, info2
+  integer, parameter :: tag = 1122
+#endif
+  character(LEN=80)::filename
+
+  integer::i,idim,ilun,ipart, dim_forcep
+  character(LEN=80)::fileloc
+  character(LEN=5)::nchar
+  real(dp),allocatable,dimension(:)::xdp
+  integer ,allocatable,dimension(:)::ii
+  integer ,allocatable,dimension(:)::ll
+
+  if(.not.extradof) return
+
+  if(verbose)write(*,*)'Entering backup_extradof_part'
+
+  ilun=2*ncpu+myid+10
+
+  ! Wait for the token
+
+
+  call title(myid,nchar)
+  fileloc=TRIM(filename)//TRIM(nchar)
+  open(unit=ilun,file=TRIM(fileloc),form='unformatted')
+  rewind(ilun)
+  ! Write force components
+  allocate(xdp(1:npart))
+  dim_forcep = 3 + 3*ndim
+  do idim=1,dim_forcep
+     ipart=0
+     do i=1,npartmax
+        if(levelp(i)>0)then
+           ipart=ipart+1
+           xdp(ipart)=forcep(i,idim)
+         end if
+     end do
+     write(ilun)xdp
+  end do
+  deallocate(xdp)
+  close(ilun)
+
+  ! Send the token
+
+end subroutine backup_extradof_part
+#endif
+
 subroutine backup_part(filename)
   use amr_commons
   use pm_commons
   implicit none
   character(LEN=80)::filename
 
-  integer::i,idim,ilun,ipart
+  integer::i,idim,ilun,ipart,dim_forcep
   character(LEN=80)::fileloc
   character(LEN=5)::nchar
   real(dp),allocatable,dimension(:)::xdp
+  real(dp),allocatable,dimension(:)::xsp
   integer ,allocatable,dimension(:)::ii
   integer ,allocatable,dimension(:)::ll
 
@@ -162,7 +221,27 @@ subroutine backup_part(filename)
      endif
   endif
 
+#ifdef OUTPUT_EXTRADOF_PART
+  allocate(xsp(1:npart))
+   dim_forcep = 3 + 3*ndim
+
+  do idim=1,dim_forcep
+     if(verbose)write(*,*)'Writing extradof'
+     ipart=0
+     do i=1,npartmax
+        if(levelp(i)>0)then
+           ipart=ipart+1
+           xsp(ipart)=forcep(i,idim)
+         end if
+     end do
+     write(ilun)xsp
+  end do
+  deallocate(xsp)
+#endif
+
   close(ilun)
+
+
 
 end subroutine backup_part
 
