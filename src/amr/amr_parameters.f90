@@ -51,6 +51,7 @@ module amr_parameters
   logical::static   = .false. ! Static mode activated
   logical::tracer   = .false. ! Tracer particles activated
   logical::lightcone= .false. ! Enable lightcone generation
+  
   ! CVG params, always set to false
   logical::extradof = .false. ! Enable extradof solver
   logical::extradof2= .false. ! Enable extradof background
@@ -59,6 +60,7 @@ module amr_parameters
   ! EFT params, will decide extradof and extradof2 after being read
   logical::eft=.false. ! enable EFT
   logical::eftlin=.false. ! linearised EFT
+
   logical::clumpfind= .false. ! Enable clump finder
   logical::gas_analytics= .false. ! Turn on a routine that outputs some gas-related data at every output
   logical::aton     = .false. ! Enable ATON coarse grid radiation transfer

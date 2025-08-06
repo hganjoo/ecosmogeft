@@ -146,14 +146,14 @@ end if
 !write(*,'(" EFT params alphaB0 = ",F6.3," alphaM0 = ",F6.3)')alphaB0,alphaM0
 if (eft) then
 if (myid==1) write(*,'(" EFT params: alphaB0 = ",F6.3,", alphaM0 = ",F6.3,", w0 = ",F6.3,", wa = ",F6.3,", npre = ",I3,", npost = ",I3)') alphaB0, alphaM0, w0, wa, npre, npost
-if (eftlin) write(*,*) "Linearised EFT selected."
+if (eftlin .and. myid==1) write(*,*) "Linearised EFT selected."
 else
 if (myid==1) write(*,*) "LCDM selected."
 end if
 
 #ifdef OUTPUT_EXTRADOF_PART
 if (eft) then
-if (myid==1) write('EFT full outputs switched on.')
+if (myid==1) write(*,*) 'EFT full outputs switched on.'
 end if
 #endif
   !-------------------------------------------------
