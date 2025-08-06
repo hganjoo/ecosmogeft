@@ -6,7 +6,7 @@ Himanish.Ganjoo@obspm.fr
 
 This code implements the Effective Field Theory of Dark Energy with cubic screening in RAMSES. 
 
-Adopted from the ECOSMOG-CVG code by Christoph Becker (https://github.com/Christovis/ecosmog-cvg). 
+Adapted from the ECOSMOG-CVG code by Christoph Becker (https://github.com/Christovis/ecosmog-cvg). 
 
 EFT theory taken from Cusin et al (https://arxiv.org/abs/1712.02782). 
 
@@ -20,9 +20,9 @@ EFT theory taken from Cusin et al (https://arxiv.org/abs/1712.02782).
 ### EFT params:
 
 - alphaB0 = braiding parameter at a = 1
-- alphaM0 = running of Planck mass at a =1
+- alphaM0 = running of Planck mass at a = 1
 - w0, wa = DE EoS params
-- Pre, post = pre and post smoothing cycles for EFT solver
+- npre, npost = pre and post smoothing cycles for EFT solver
 
 ## Output options:
 
