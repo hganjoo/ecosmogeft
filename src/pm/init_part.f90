@@ -68,8 +68,10 @@ subroutine init_part
 
   ! Allocate forces for extradof
 #ifdef OUTPUT_EXTRADOF_PART
+if (eft) then
   allocate (forcep(npartmax, 3*ndim + 3))
   forcep = 0.0
+end if
 #endif
   allocate(mp    (npartmax))
   allocate(nextp (npartmax))

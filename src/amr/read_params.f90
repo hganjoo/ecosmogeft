@@ -22,7 +22,7 @@ subroutine read_params
   !--------------------------------------------------
   ! Namelist definitions
   !--------------------------------------------------
-  namelist/run_params/clumpfind,extradof,extradof2,extradof3,extradof4,cosmo,pic,sink,lightcone,poisson,hydro,rt,verbose,debug &
+  namelist/run_params/clumpfind,extradof,extradof2,extradof3,extradof4,eft,eftlin,cosmo,pic,sink,lightcone,poisson,hydro,rt,verbose,debug &
        & ,nrestart,ncontrol,nstepmax,nsubcycle,nremap,ordering,gas_analytics &
        & ,bisec_tol,static,geom,overload,cost_weighting,aton
   namelist/output_params/noutput,foutput,fbackup,aout,tout,output_mode &
@@ -133,10 +133,28 @@ subroutine read_params
 86 continue
   rewind(1)
 
+if (eft) then
+  extradof  = .true.
+  extradof2 = .true.
+end if
+
+if (eft .and. eftlin) then
+  extradof2 = .true. 
+  extradof3 = .true.
+end if
+
 !write(*,'(" EFT params alphaB0 = ",F6.3," alphaM0 = ",F6.3)')alphaB0,alphaM0
+if (eft) then
 if (myid==1) write(*,'(" EFT params: alphaB0 = ",F6.3,", alphaM0 = ",F6.3,", w0 = ",F6.3,", wa = ",F6.3,", npre = ",I3,", npost = ",I3)') alphaB0, alphaM0, w0, wa, npre, npost
+if (eftlin) write(*,*) "Linearised EFT selected."
+else
+if (myid==1) write(*,*) "LCDM selected."
+end if
+
 #ifdef OUTPUT_EXTRADOF_PART
+if (eft) then
 if (myid==1) write('EFT full outputs switched on.')
+end if
 #endif
   !-------------------------------------------------
   ! Compute time step for outputs

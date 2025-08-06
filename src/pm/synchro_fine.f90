@@ -390,6 +390,7 @@ subroutine sync(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
   end do
 
 #ifdef OUTPUT_EXTRADOF_PART
+if (eft) then
 
   do ind = 1,twotondim
    do j = 1,np
@@ -406,6 +407,7 @@ subroutine sync(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
    end do
    end do
 
+end if
 #endif
 
   ! For sink particle only, store contribution to the sink force
@@ -799,7 +801,7 @@ subroutine sync2(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
   end do
 
 #ifdef OUTPUT_EXTRADOF_PART
-
+if (eft) then
   do ind = 1,threetondim
    do j = 1,np
       forcep(ind_part(j),1) = (Ia*phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))*vol(j,ind) !phi
@@ -815,6 +817,7 @@ subroutine sync2(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
    end do
    end do
 
+end if
 #endif
 
   ! For sink particle only, store contribution to the sink force

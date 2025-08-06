@@ -240,6 +240,7 @@ subroutine backup_part(filename)
   endif
 
 #ifdef OUTPUT_EXTRADOF_PART
+if (eft) then
   allocate(xsp(1:npart))
    dim_forcep = 3 + 3*ndim
 
@@ -255,6 +256,7 @@ subroutine backup_part(filename)
      write(ilun)xsp
   end do
   deallocate(xsp)
+end if
 #endif
 
 
