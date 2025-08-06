@@ -1,7 +1,5 @@
 # ECOSMOG-EFT
 
-————————————————————
-
 Himanish Ganjoo - 6 Aug 2025
 
 Himanish.Ganjoo@obspm.fr
@@ -17,7 +15,7 @@ EFT theory taken from Cusin et al (https://arxiv.org/abs/1712.02782).
 ### Run params:
 
 - For EFT, set eft=.true.
-- For linear EFT, set eft=.true. and eftlin=.true.
+- For linear EFT, set eft=.true. and eftlin=.true. This version directly solves the modified Poisson equation for gravity without computing the scalar field chi. 
 
 ### EFT params:
 
