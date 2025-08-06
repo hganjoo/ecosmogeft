@@ -55,28 +55,28 @@ subroutine backup_poisson(filename)
            do ind=1,twotondim
               iskip=ncoarse+(ind-1)*ngridmax
               
-              ! Write coordinates
-              dx=0.5d0**ilevel
-              iz=(ind-1)/4
-              iy=(ind-1-4*iz)/2
-              ix=(ind-1-2*iy-4*iz)
-              if(ndim>0)xc(ind,1)=(dble(ix)-0.5d0)*dx
-              if(ndim>1)xc(ind,2)=(dble(iy)-0.5d0)*dx
-              if(ndim>2)xc(ind,3)=(dble(iz)-0.5d0)*dx
-              do ivar=1,ndim
-                 do i=1,ncache
-                    xdp(i)=xg(ind_grid(i),ivar)+xc(ind,ivar)
-                 end do
-                 write(ilun)xdp
-              end do
+            !   ! Write coordinates
+            !   dx=0.5d0**ilevel
+            !   iz=(ind-1)/4
+            !   iy=(ind-1-4*iz)/2
+            !   ix=(ind-1-2*iy-4*iz)
+            !   if(ndim>0)xc(ind,1)=(dble(ix)-0.5d0)*dx
+            !   if(ndim>1)xc(ind,2)=(dble(iy)-0.5d0)*dx
+            !   if(ndim>2)xc(ind,3)=(dble(iz)-0.5d0)*dx
+            !   do ivar=1,ndim
+            !      do i=1,ncache
+            !         xdp(i)=xg(ind_grid(i),ivar)+xc(ind,ivar)
+            !      end do
+            !      write(ilun)xdp
+            !   end do
 
-              ! Write vector Galileon fields
-              if(extradof) then
-              do i=1,ncache
-                 xdp(i)=sf(ind_grid(i)+iskip)
-              end do
-              endif
-              write(ilun)xdp
+            !   ! Write vector Galileon fields
+            !   if(extradof) then
+            !   do i=1,ncache
+            !      xdp(i)=sf(ind_grid(i)+iskip)
+            !   end do
+            !   endif
+            !   write(ilun)xdp
               !do ivar=1,ndim
               !   do i=1,ncache
               !      xdp(i)=cbf(ind_grid(i)+iskip,ivar)
