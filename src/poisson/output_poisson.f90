@@ -31,8 +31,8 @@ subroutine backup_poisson(filename)
   write(ilun)ndim
   write(ilun)nlevelmax
   write(ilun)nboundary
-  !do ilevel=1,nlevelmax
-  do ilevel=levelmin,nlevelmax
+  do ilevel=1,nlevelmax
+  !do ilevel=levelmin,nlevelmax
      do ibound=1,nboundary+ncpu
         if(ibound<=ncpu)then
            ncache=numbl(ibound,ilevel)
