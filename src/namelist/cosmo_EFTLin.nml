@@ -3,8 +3,8 @@
 cosmo=.true.
 pic=.true.
 poisson=.true.
-eft=.false.
-eftlin=.false.
+eft=.true.
+eftlin=.true.
 nrestart=0
 nremap=10
 nsubcycle=1,2,2,2,2,2,2,2,2
@@ -30,9 +30,13 @@ ngridmax=3000000
 nexpand=1
 /
 
-
 &REFINE_PARAMS 
 m_refine=14,14,14,14,14,14,14,14,14,14
 /
 
-
+&EFT_PARAMS
+alphaB0 = -0.48
+alphaM0 = 0.0
+npre = 15
+npost = 3
+/

@@ -73,18 +73,18 @@ subroutine adaptive_loop
      
      if(extradof2) then
         ! cv-Galileon background (analytical solution on the tracker)
-        EE       = dsqrt(0.5d0*(omega_m/aexp**3+dsqrt(omega_m**2/aexp**6+4.0d0*(1.0d0-omega_m))))
-        rc_cvg   = EE**2*(param_b3/(2.0d0*(1.0d0-omega_m)))**(2.0d0/3.0d0)
+      !   EE       = dsqrt(0.5d0*(omega_m/aexp**3+dsqrt(omega_m**2/aexp**6+4.0d0*(1.0d0-omega_m))))
+      !   rc_cvg   = EE**2*(param_b3/(2.0d0*(1.0d0-omega_m)))**(2.0d0/3.0d0)
 
-        pre_factor = 0.5d0*(0.5d0*param_b3/(1.0d0-omega_m))**(1.0d0/3.0d0)
-        alpha_cvg  = pre_factor &
-                   * (dsqrt(omega_m**2/aexp**6+4.0d0*(1.0d0-omega_m))-omega_m/aexp**3)
-        beta_cvg   = pre_factor &
-                   * (5.0d0*omega_m/aexp**3+3.0d0*omega_m**2/aexp**6/dsqrt(omega_m**2/aexp**6+4.0d0*(1.0d0-omega_m))) &
-                   + param_b3
+      !   pre_factor = 0.5d0*(0.5d0*param_b3/(1.0d0-omega_m))**(1.0d0/3.0d0)
+      !   alpha_cvg  = pre_factor &
+      !              * (dsqrt(omega_m**2/aexp**6+4.0d0*(1.0d0-omega_m))-omega_m/aexp**3)
+      !   beta_cvg   = pre_factor &
+      !              * (5.0d0*omega_m/aexp**3+3.0d0*omega_m**2/aexp**6/dsqrt(omega_m**2/aexp**6+4.0d0*(1.0d0-omega_m))) &
+      !              + param_b3
 
-        beta_dgp = -(0.5d0*omega_m/aexp**3+param_o)/sqrt(param_o*(omega_m/aexp**3+param_o))  !Chr 30/03/20
-        gamma_dgp = 2.0D0*beta_cvg**2/(9.0D0*beta_dgp*rc_cvg)  ! Chr 30/03/20
+      !   beta_dgp = -(0.5d0*omega_m/aexp**3+param_o)/sqrt(param_o*(omega_m/aexp**3+param_o))  !Chr 30/03/20
+      !   gamma_dgp = 2.0D0*beta_cvg**2/(9.0D0*beta_dgp*rc_cvg)  ! Chr 30/03/20
 
         call compute_eft_quantities()
 
