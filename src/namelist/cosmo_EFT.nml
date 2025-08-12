@@ -39,6 +39,6 @@ alphaB0 = -0.48
 alphaM0 = 0.0
 npre = 15
 npost = 3
-w0=-1.0
-wa=0.0
+w0 = -1.0
+wa = 0.0
 /
