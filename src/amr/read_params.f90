@@ -67,7 +67,7 @@ subroutine read_params
   write(*,*)' '
   write(*,'(" Working with nproc = ",I4," for ndim = ",I1)')ncpu,ndim
   write(*,*)' '
-  write(*,*)'.      ECOSMOG-EFT by Himanish Ganjoo, LUX OBSPM               '
+  write(*,*)'.        ECOSMOG-EFT by Himanish Ganjoo, LUX OBSPM             '
   write(*,*)' '
   ! Check nvar is not too small
 #ifdef SOLVERhydro
