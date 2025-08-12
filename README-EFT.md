@@ -35,4 +35,8 @@ For this option, add the compile time option -DOUTPUT_EXTRADOF_PART to the makef
 
 If eflin=.true., the code will output the same fields, but these have no meaning since the chi is not computed in the linear case. Psi and Chi can be obtained in this case by rescaling phi by mu_chi and mu_psi (see Cusin et al)
 
+## To do
+
+12 August 2025: add w0-wa support to Friedmann function
+
 

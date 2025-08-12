@@ -34,7 +34,7 @@ subroutine init_time
 
      ! Compute Friedman model look up table
      if(myid==1)write(*,*)'Computing Friedman model'
-     call friedman(dble(omega_m),dble(omega_l),dble(omega_k), dble(w0), dble(wa), &
+     call friedman(dble(omega_m),dble(omega_l),dble(omega_k), &
           & 1.d-6,dble(aexp_ini), &
           & aexp_frw,hexp_frw,tau_frw,t_frw,n_frw)
 
@@ -518,12 +518,12 @@ contains
      
 end subroutine init_cosmo
 
-subroutine friedman(O_mat_0,O_vac_0,O_k_0,w_0,w_a,alpha,axp_min, &
+subroutine friedman(O_mat_0,O_vac_0,O_k_0,alpha,axp_min, &
      & axp_out,hexp_out,tau_out,t_out,ntable)
   use amr_parameters
   implicit none
   integer::ntable
-  real(kind=8)::O_mat_0, O_vac_0, O_k_0, w_0, w_a
+  real(kind=8)::O_mat_0, O_vac_0, O_k_0
   real(kind=8)::alpha,axp_min
   real(dp),dimension(0:ntable)::axp_out,hexp_out,tau_out,t_out
   ! ######################################################!
@@ -560,14 +560,14 @@ subroutine friedman(O_mat_0,O_vac_0,O_k_0,w_0,w_a,alpha,axp_min, &
   do while ( (axp_tau .ge. axp_min) .or. (axp_t .ge. axp_min) ) 
      
      nstep = nstep + 1
-     dtau = alpha * axp_tau / dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0,w_0,w_a)
-     axp_tau_pre = axp_tau - dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0,w_0,w_a)*dtau/2.d0
-     axp_tau = axp_tau - dadtau(axp_tau_pre,O_mat_0,O_vac_0,O_k_0,w_0,w_a)*dtau
+     dtau = alpha * axp_tau / dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0)
+     axp_tau_pre = axp_tau - dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0)*dtau/2.d0
+     axp_tau = axp_tau - dadtau(axp_tau_pre,O_mat_0,O_vac_0,O_k_0)*dtau
      tau = tau - dtau
      
-     dt = alpha * axp_t / dadt(axp_t,O_mat_0,O_vac_0,O_k_0,w_0,w_a)
-     axp_t_pre = axp_t - dadt(axp_t,O_mat_0,O_vac_0,O_k_0,w_0,w_a)*dt/2.d0
-     axp_t = axp_t - dadt(axp_t_pre,O_mat_0,O_vac_0,O_k_0,w_0,w_a)*dt
+     dt = alpha * axp_t / dadt(axp_t,O_mat_0,O_vac_0,O_k_0)
+     axp_t_pre = axp_t - dadt(axp_t,O_mat_0,O_vac_0,O_k_0)*dt/2.d0
+     axp_t = axp_t - dadt(axp_t_pre,O_mat_0,O_vac_0,O_k_0)*dt
      t = t - dt
      
   end do
@@ -586,19 +586,19 @@ subroutine friedman(O_mat_0,O_vac_0,O_k_0,w_0,w_a,alpha,axp_min, &
   t_out(nout)=t
   tau_out(nout)=tau
   axp_out(nout)=axp_tau
-  hexp_out(nout)=dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0,w_0,w_a)/axp_tau
+  hexp_out(nout)=dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0)/axp_tau
 
   do while ( (axp_tau .ge. axp_min) .or. (axp_t .ge. axp_min) ) 
      
      nstep = nstep + 1
-     dtau = alpha * axp_tau / dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0,w_0,w_a)
-     axp_tau_pre = axp_tau - dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0,w_0,w_a)*dtau/2.d0
-     axp_tau = axp_tau - dadtau(axp_tau_pre,O_mat_0,O_vac_0,O_k_0,w_0,w_a)*dtau
+     dtau = alpha * axp_tau / dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0)
+     axp_tau_pre = axp_tau - dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0)*dtau/2.d0
+     axp_tau = axp_tau - dadtau(axp_tau_pre,O_mat_0,O_vac_0,O_k_0)*dtau
      tau = tau - dtau
 
-     dt = alpha * axp_t / dadt(axp_t,O_mat_0,O_vac_0,O_k_0,w_0,w_a)
-     axp_t_pre = axp_t - dadt(axp_t,O_mat_0,O_vac_0,O_k_0,w_0,w_a)*dt/2.d0
-     axp_t = axp_t - dadt(axp_t_pre,O_mat_0,O_vac_0,O_k_0,w_0,w_a)*dt
+     dt = alpha * axp_t / dadt(axp_t,O_mat_0,O_vac_0,O_k_0)
+     axp_t_pre = axp_t - dadt(axp_t,O_mat_0,O_vac_0,O_k_0)*dt/2.d0
+     axp_t = axp_t - dadt(axp_t_pre,O_mat_0,O_vac_0,O_k_0)*dt
      t = t - dt
      
      if(mod(nstep,nskip)==0)then
@@ -606,14 +606,14 @@ subroutine friedman(O_mat_0,O_vac_0,O_k_0,w_0,w_a,alpha,axp_min, &
         t_out(nout)=t
         tau_out(nout)=tau
         axp_out(nout)=axp_tau
-        hexp_out(nout)=dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0,w_0,w_a)/axp_tau
+        hexp_out(nout)=dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0)/axp_tau
      end if
 
   end do
   t_out(ntable)=t
   tau_out(ntable)=tau
   axp_out(ntable)=axp_tau
-  hexp_out(ntable)=dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0,w_0,w_a)/axp_tau
+  hexp_out(ntable)=dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0)/axp_tau
 
 end subroutine friedman
 
@@ -653,30 +653,28 @@ end subroutine friedman
 !   return
 ! end function dadt
 
-function dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0,w_0,w_a)
+function dadtau(axp_tau,O_mat_0,O_vac_0,O_k_0)
   use amr_parameters
   use amr_commons
-  real(kind=8)::dadtau,axp_tau,O_mat_0,O_vac_0,O_k_0,w_0,w_a,evt
-  evt = axp_tau**(-3.0d0*(1.0d0 + w_0 + w_a)) * exp(3.0d0*w_a*(axp_tau - 1.0d0))
-
+  real(kind=8)::dadtau,axp_tau,O_mat_0,O_vac_0,O_k_0
+  
+  
    dadtau = axp_tau**3*  &
-         & (O_mat_0+O_vac_0*evt*axp_tau**3+O_k_0*axp_tau)
+         & (O_mat_0+O_vac_0*axp_tau**3+O_k_0*axp_tau)
   
   dadtau = dsqrt(dadtau)
 
   return
 end function dadtau
 
-function dadt(axp_t,O_mat_0,O_vac_0,O_k_0,w_0,w_a)
+function dadt(axp_t,O_mat_0,O_vac_0,O_k_0)
   use amr_parameters
   use amr_commons
-  real(kind=8)::dadt,axp_t,O_mat_0,O_vac_0,O_k_0,w_0,w_a,evt
-
-  evt = axp_t**(-3.0d0*(1.0d0 + w_0 + w_a)) * exp(3.0d0*w_a*(axp_t - 1.0d0))
+  real(kind=8)::dadt,axp_t,O_mat_0,O_vac_0,O_k_0
 
   
    dadt = (1.0D0/axp_t)* &
-         & (O_mat_0+O_vac_0*evt*axp_t**3+O_k_0*axp_t)
+         & (O_mat_0+O_vac_0*axp_t**3+O_k_0*axp_t)
   
   dadt = dsqrt(dadt)
   
