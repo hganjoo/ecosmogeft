@@ -37,7 +37,7 @@ subroutine read_params
        & ,xcentre_frame,ycentre_frame,zcentre_frame &
        & ,deltax_frame,deltay_frame,deltaz_frame,movie &
        & ,imovout,imov,tendmov,aendmov
-   namelist/eft_params/alphaB0,alphaM0,npre,npost
+   namelist/eft_params/alphaB0,alphaM0,npre,npost,w0,wa
 
   ! MPI initialization
 #ifndef WITHOUTMPI
