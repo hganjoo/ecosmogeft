@@ -141,6 +141,7 @@ if (eft) then
 end if
 
 if (eft .and. eftlin) then
+  extradof = .false.
   extradof2 = .true. 
   extradof3 = .true.
 end if
