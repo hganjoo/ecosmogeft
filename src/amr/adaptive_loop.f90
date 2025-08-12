@@ -62,7 +62,7 @@ subroutine adaptive_loop
   if(myid==1) write(*,*) 'Starting time integration' 
 
   if(extradof2) then
-     open(unit=1234, file='background.txt')
+     open(unit=1234, file='background.txt',position='append')  
   end if
 
   do
@@ -89,7 +89,10 @@ subroutine adaptive_loop
         call compute_eft_quantities()
 
         ! Print results
-         if (myid==1) print '(A,F6.3,A,5F9.4)', 'EFT at a = ', aexp, ': alphaB, alphaM, C2, C4, mu_phi = ', alphaB, alphaM, C2, C4, mu_phi
+         if (myid==1) then
+           print '(A,F6.3,A,5F9.4)', 'EFT at a = ', aexp, ': alphaB, alphaM, C2, C4, mu_phi = ', alphaB, alphaM, C2, C4, mu_phi
+           write(1234,'(F0.6,5(",",F0.6))') aexp, alphaB, alphaM, C2, C4, mu_phi
+         end if
 
          
 
