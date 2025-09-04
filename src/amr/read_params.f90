@@ -131,6 +131,7 @@ subroutine read_params
   rewind(1)
   read(1,NML=extradof_params,END=85)  ! Chr 30/03/20
 85 continue
+rewind(1)
   read(1,NML=eft_params,END=86)       ! Added EFT params
 86 continue
   rewind(1)
