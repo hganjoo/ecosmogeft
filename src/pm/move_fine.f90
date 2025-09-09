@@ -405,22 +405,64 @@ subroutine move1(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
 
 if (eft) then
 
-  do ind = 1,twotondim
+   if (.not. eftlin) then
+   !full nonlinear
+   do ind = 1,twotondim
+      do j = 1,np
+         forcep(ind_part(j),1) = forcep(ind_part(j),1) + (Ia*phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))*vol(j,ind) !phi
+         forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + (Ia*phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))*vol(j,ind) !psi
+         forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + (sf(indp(j,ind)))*vol(j,ind) !chi
+
+         do idim=1,ndim
+            forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + (Ia*f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad phi without fifth force (lapinv source)
+            forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+5) + (Ia*f(indp(j,ind),idim) + alphaB*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad psi
+            forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+9) + sf_grad(indp(j,ind),idim)*vol(j,ind) !grad chi
+         end do
+         
+      end do
+      end do
+
+   else
+         ! linearised
+         do ind = 1,twotondim
+            do j = 1,np
+               forcep(ind_part(j),1) = forcep(ind_part(j),1) + Ia*mu_phi*phi(indp(j,ind))*vol(j,ind) !phi
+               forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + Ia*(1 + alphaB*xiv/nuv)*phi(indp(j,ind))*vol(j,ind) !psi
+               forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + Ia*(xiv/nuv)*phi(indp(j,ind))*vol(j,ind) !chi
+
+               do idim=1,ndim
+                  forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + Ia*mu_phi*f(indp(j,ind),idim)*vol(j,ind) !grad phi
+                  forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+5) + Ia*(1 + alphaB*xiv/nuv)*f(indp(j,ind),idim)*vol(j,ind) !grad psi
+                  forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+9) + Ia*(xiv/nuv)*f(indp(j,ind),idim)*vol(j,ind) !grad chi
+               end do
+               
+            end do
+            end do
+
+   end if
+
+else
+
+! LCDM
+do ind = 1,twotondim
    do j = 1,np
-      forcep(ind_part(j),1) = (Ia*phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))*vol(j,ind) !phi
-      forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + (Ia*phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))*vol(j,ind) !psi
-      forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + (sf(indp(j,ind)))*vol(j,ind) !chi
+      forcep(ind_part(j),1) = forcep(ind_part(j),1) + phi(indp(j,ind))*vol(j,ind) !phi
+      forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + phi(indp(j,ind))*vol(j,ind) !psi
+      !forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + Ia*(xiv/nuv)*phi(indp(j,ind))*vol(j,ind) !chi
 
       do idim=1,ndim
-         forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + Ia*f(indp(j,ind),idim) + ((alphaB-alphaM)*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad phi without fifth force (lapinv source)
-         forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+4) + (Ia*f(indp(j,ind),idim) + alphaB*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad psi
-         forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+6) + sf_grad(indp(j,ind),idim)*vol(j,ind) !grad chi
+         forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + f(indp(j,ind),idim)*vol(j,ind) !grad phi
+         forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+5) + f(indp(j,ind),idim)*vol(j,ind) !grad psi
+         !forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+6) + Ia*(xiv/nuv)*phi(indp(j,ind))*vol(j,ind) !grad chi
       end do
       
    end do
    end do
 
+
+
 end if
+
 
 #endif
 
@@ -826,20 +868,61 @@ subroutine move2(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
 
 if (eft) then
 
-  do ind = 1,threetondim
+   if (.not. eftlin) then
+   !full nonlinear
+   do ind = 1,threetondim
+      do j = 1,np
+         forcep(ind_part(j),1) = forcep(ind_part(j),1) + (Ia*phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))*vol(j,ind) !phi
+         forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + (Ia*phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))*vol(j,ind) !psi
+         forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + (sf(indp(j,ind)))*vol(j,ind) !chi
+
+         do idim=1,ndim
+            forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + (Ia*f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad phi without fifth force (lapinv source)
+            forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+5) + (Ia*f(indp(j,ind),idim) + alphaB*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad psi
+            forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+9) + sf_grad(indp(j,ind),idim)*vol(j,ind) !grad chi
+         end do
+         
+      end do
+      end do
+
+   else
+         ! linearised
+         do ind = 1,threetondim
+            do j = 1,np
+               forcep(ind_part(j),1) = forcep(ind_part(j),1) + Ia*mu_phi*phi(indp(j,ind))*vol(j,ind) !phi
+               forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + Ia*(1 + alphaB*xiv/nuv)*phi(indp(j,ind))*vol(j,ind) !psi
+               forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + Ia*(xiv/nuv)*phi(indp(j,ind))*vol(j,ind) !chi
+
+               do idim=1,ndim
+                  forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + Ia*mu_phi*f(indp(j,ind),idim)*vol(j,ind) !grad phi
+                  forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+5) + Ia*(1 + alphaB*xiv/nuv)*f(indp(j,ind),idim)*vol(j,ind) !grad psi
+                  forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+9) + Ia*(xiv/nuv)*f(indp(j,ind),idim)*vol(j,ind) !grad chi
+               end do
+               
+            end do
+            end do
+
+   end if
+
+else
+
+! LCDM
+do ind = 1,threetondim
    do j = 1,np
-      forcep(ind_part(j),1) = (Ia*phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))*vol(j,ind) !phi
-      forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + (Ia*phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))*vol(j,ind) !psi
-      forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + (sf(indp(j,ind)))*vol(j,ind) !chi
+      forcep(ind_part(j),1) = forcep(ind_part(j),1) + phi(indp(j,ind))*vol(j,ind) !phi
+      forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + phi(indp(j,ind))*vol(j,ind) !psi
+      !forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + Ia*(xiv/nuv)*phi(indp(j,ind))*vol(j,ind) !chi
 
       do idim=1,ndim
-         forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + Ia*f(indp(j,ind),idim) + ((alphaB-alphaM)*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad phi without fifth force (lapinv source)
-         forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+4) + (Ia*f(indp(j,ind),idim) + alphaB*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad psi
-         forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+6) + sf_grad(indp(j,ind),idim)*vol(j,ind) !grad chi
+         forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + f(indp(j,ind),idim)*vol(j,ind) !grad phi
+         forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+5) + f(indp(j,ind),idim)*vol(j,ind) !grad psi
+         !forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+6) + Ia*(xiv/nuv)*phi(indp(j,ind))*vol(j,ind) !grad chi
       end do
       
    end do
    end do
+
+
 
 end if
 
