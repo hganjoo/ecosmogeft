@@ -240,12 +240,12 @@ subroutine backup_part(filename)
   endif
 
 #ifdef OUTPUT_EXTRADOF_PART
-if (eft) then
+
   allocate(xsp(1:npart))
    dim_forcep = 3 + 3*ndim
 
   do idim=1,dim_forcep
-     if(verbose)write(*,*)'Writing extradof'
+     write(*,*)'Writing extradof'
      ipart=0
      do i=1,npartmax
         if(levelp(i)>0)then
@@ -256,7 +256,7 @@ if (eft) then
      write(ilun)xsp
   end do
   deallocate(xsp)
-end if
+
 #endif
 
 
