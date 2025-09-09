@@ -64,10 +64,10 @@ contains
     Ia = exp(-1.0_dp*integral)
 
     ! Step 6: C2 and C4
-    !C2 = -alphaM + alphaB * (1.0_dp + alphaM) + (1.0_dp + alphaB) * HdotbyH2 + abdot + 1.5_dp * Ia * omega_m / (aexp**3 * Hv**2)
-    C2 = -alphaM + alphaB*(1.0_dp + alphaM) + (1.0_dp + alphaB)*HdotbyH2 &
-     + (3.0_dp*aexp**3 * alphaB0 * omega_m) / (aexp**3 * (1.0_dp - omega_m) + omega_m)**2 &
-     + aexp**(-3.0_dp) * 1.5_dp * Ia * omega_m / (Hv**2)
+    C2 = -alphaM + alphaB * (1.0_dp + alphaM) + (1.0_dp + alphaB) * HdotbyH2 + abdot + 1.5_dp * Ia * omega_m / (aexp**3 * Hv**2)
+    !C2 = -alphaM + alphaB*(1.0_dp + alphaM) + (1.0_dp + alphaB)*HdotbyH2 &
+    ! + (3.0_dp*aexp**3 * alphaB0 * omega_m) / (aexp**3 * (1.0_dp - omega_m) + omega_m)**2 &
+    ! + aexp**(-3.0_dp) * 1.5_dp * Ia * omega_m / (Hv**2)
     C4 = -4.0_dp * alphaB + 2.0_dp * alphaM
 
     xiv = alphaB - alphaM
