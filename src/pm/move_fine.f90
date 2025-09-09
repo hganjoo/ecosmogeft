@@ -403,6 +403,8 @@ subroutine move1(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
 
 #ifdef OUTPUT_EXTRADOF_PART
 
+forcep = 0.0
+
 if (eft) then
 
    if (.not. eftlin) then
@@ -866,6 +868,7 @@ subroutine move2(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
 
 #ifdef OUTPUT_EXTRADOF_PART
 
+forcep = 0.0
 if (eft) then
 
    if (.not. eftlin) then
