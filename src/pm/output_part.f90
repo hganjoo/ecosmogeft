@@ -245,7 +245,7 @@ subroutine backup_part(filename)
    dim_forcep = 3 + 3*ndim
 
   do idim=1,dim_forcep
-     write(*,*)'Writing extradof'
+     if(myid==1)write(*,*)'Writing extradof parts.'
      ipart=0
      do i=1,npartmax
         if(levelp(i)>0)then
