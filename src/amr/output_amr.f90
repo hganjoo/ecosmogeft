@@ -28,7 +28,7 @@ subroutine dump_all
   if(ndim>1)then
      filedir='output_'//TRIM(nchar)//'/'
      filecmd='mkdir -p '//TRIM(filedir)
-#ifndef NMKDIR
+#ifndef WITHOUTMKDIR
 #ifdef NOSYSTEM
      call PXFMKDIR(TRIM(filedir),LEN(TRIM(filedir)),O'755',info)
 #else
