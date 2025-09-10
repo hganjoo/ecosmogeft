@@ -854,7 +854,7 @@ subroutine fill_comm(ind_part,ind_com,ind_list,np,ilevel,icpu)
   integer::np,ilevel,icpu
   integer,dimension(1:nvector)::ind_part,ind_com,ind_list
   integer::dim_forcep
-  integer::i,idim
+  integer::i,idim,idim2
   logical,dimension(1:nvector),save::ok=.true.
 
   ! Gather particle level and identity
@@ -890,6 +890,11 @@ subroutine fill_comm(ind_part,ind_com,ind_list,np,ilevel,icpu)
 
 #ifdef OUTPUT_EXTRADOF_PART
    dim_forcep = 12
+   idim2=1
+   if(star.or.sink) then
+      idim2=2
+      if(metal) idim2=3
+   end if
 
    do idim=1,dim_forcep
      do i=1,np
@@ -914,8 +919,8 @@ subroutine empty_comm(ind_com,np,ilevel,icpu)
   implicit none
   integer::np,icpu,ilevel
   integer,dimension(1:nvector)::ind_com
-  
-  integer::i,idim,igrid
+  integer::dim_forcep
+  integer::i,idim,igrid,idim2
   integer,dimension(1:nvector),save::ind_list,ind_part
   logical,dimension(1:nvector),save::ok=.true.
 
@@ -962,6 +967,11 @@ subroutine empty_comm(ind_com,np,ilevel,icpu)
 
 #ifdef OUTPUT_EXTRADOF_PART
    dim_forcep = 12
+   idim2=1
+   if(star.or.sink) then
+      idim2=2
+      if(metal) idim2=3
+   end if
    do idim=1,dim_forcep
      do i=1,np
         forcep(ind_part(i),idim)=emission(icpu,ilevel)%up(ind_com(i),twondim+idim2+idim)
