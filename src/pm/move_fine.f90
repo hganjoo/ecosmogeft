@@ -410,63 +410,63 @@ if (eft) then
    if (.not. eftlin) then
    !full nonlinear
 
-   ! temp accumulators
-   real(dp), allocatable :: Sp(:), Ss(:), Gp(:,:), Gs(:,:)
-   integer :: j, ind, idim, ip, idx
-   real(dp) :: w, p, s, fx, sg, dB
+   ! ! temp accumulators
+   ! real(dp), allocatable :: Sp(:), Ss(:), Gp(:,:), Gs(:,:)
+   ! integer :: j, ind, idim, ip, idx
+   ! real(dp) :: w, p, s, fx, sg, dB
 
-   allocate(Sp(np), Ss(np), Gp(np,ndim), Gs(np,ndim))
-   Sp = 0.0_dp;  Ss = 0.0_dp
-   Gp = 0.0_dp;  Gs = 0.0_dp
+   ! allocate(Sp(np), Ss(np), Gp(np,ndim), Gs(np,ndim))
+   ! Sp = 0.0_dp;  Ss = 0.0_dp
+   ! Gp = 0.0_dp;  Gs = 0.0_dp
 
-   ! ---- Pass 1: scalars
-   do ind = 1, twotondim
-   do j = 1, np
-      idx = indp(j,ind)
-      w   = vol(j,ind)
-      Sp(j) = Sp(j) + phi(idx) * w
-      Ss(j) = Ss(j) + sf(idx)  * w
-   end do
-   end do
+   ! ! ---- Pass 1: scalars
+   ! do ind = 1, twotondim
+   ! do j = 1, np
+   !    idx = indp(j,ind)
+   !    w   = vol(j,ind)
+   !    Sp(j) = Sp(j) + phi(idx) * w
+   !    Ss(j) = Ss(j) + sf(idx)  * w
+   ! end do
+   ! end do
 
-   ! ---- Pass 2: gradients
-   do ind = 1, twotondim
-   do j = 1, np
-      idx = indp(j,ind)
-      w   = vol(j,ind)
-      do idim = 1, ndim
-         Gp(j,idim) = Gp(j,idim) + f(idx,idim)       * w
-         Gs(j,idim) = Gs(j,idim) + sf_grad(idx,idim) * w
-      end do
-   end do
-   end do
+   ! ! ---- Pass 2: gradients
+   ! do ind = 1, twotondim
+   ! do j = 1, np
+   !    idx = indp(j,ind)
+   !    w   = vol(j,ind)
+   !    do idim = 1, ndim
+   !       Gp(j,idim) = Gp(j,idim) + f(idx,idim)       * w
+   !       Gs(j,idim) = Gs(j,idim) + sf_grad(idx,idim) * w
+   !    end do
+   ! end do
+   ! end do
 
-   ! write to particles
-   dB = alphaB - alphaM
-   forcep(:,1)        = forcep(:,1)        + ( Ia*Sp + dB     *Ss )
-   forcep(:,2+ndim)   = forcep(:,2+ndim)   + ( Ia*Sp + alphaB  *Ss )
-   forcep(:,6+ndim)   = forcep(:,6+ndim)   + Ss
+   ! ! write to particles
+   ! dB = alphaB - alphaM
+   ! forcep(:,1)        = forcep(:,1)        + ( Ia*Sp + dB     *Ss )
+   ! forcep(:,2+ndim)   = forcep(:,2+ndim)   + ( Ia*Sp + alphaB  *Ss )
+   ! forcep(:,6+ndim)   = forcep(:,6+ndim)   + Ss
 
-   forcep(:,2:1+ndim) = forcep(:,2:1+ndim) + ( Ia*Gp + dB     *Gs )
-   forcep(:,6:5+ndim) = forcep(:,6:5+ndim) + ( Ia*Gp + alphaB *Gs )
-   forcep(:,10:9+ndim)= forcep(:,10:9+ndim)+ Gs
+   ! forcep(:,2:1+ndim) = forcep(:,2:1+ndim) + ( Ia*Gp + dB     *Gs )
+   ! forcep(:,6:5+ndim) = forcep(:,6:5+ndim) + ( Ia*Gp + alphaB *Gs )
+   ! forcep(:,10:9+ndim)= forcep(:,10:9+ndim)+ Gs
 
-   deallocate(Sp, Ss, Gp, Gs)
+   ! deallocate(Sp, Ss, Gp, Gs)
    !full nonlinear
-   ! do ind = 1,twotondim
-   !    do j = 1,np
-   !       forcep(ind_part(j),1) = forcep(ind_part(j),1) + (Ia*phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))*vol(j,ind) !phi
-   !       forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + (Ia*phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))*vol(j,ind) !psi
-   !       forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + (sf(indp(j,ind)))*vol(j,ind) !chi
+   do ind = 1,twotondim
+      do j = 1,np
+         forcep(ind_part(j),1) = forcep(ind_part(j),1) + (Ia*phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))*vol(j,ind) !phi
+         forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + (Ia*phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))*vol(j,ind) !psi
+         forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + (sf(indp(j,ind)))*vol(j,ind) !chi
 
-   !       do idim=1,ndim
-   !          forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + (Ia*f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad phi without fifth force (lapinv source)
-   !          forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+5) + (Ia*f(indp(j,ind),idim) + alphaB*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad psi
-   !          forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+9) + sf_grad(indp(j,ind),idim)*vol(j,ind) !grad chi
-   !       end do
+         do idim=1,ndim
+            forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + (Ia*f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad phi without fifth force (lapinv source)
+            forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+5) + (Ia*f(indp(j,ind),idim) + alphaB*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad psi
+            forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+9) + sf_grad(indp(j,ind),idim)*vol(j,ind) !grad chi
+         end do
          
-   !    end do
-   !    end do
+      end do
+      end do
 
    else
          ! linearised
@@ -931,65 +931,65 @@ forcep = 0.0
 if (eft) then
 
    if (.not. eftlin) then
+   ! !full nonlinear
+
+   ! ! temp accumulators
+   ! real(dp), allocatable :: Sp(:), Ss(:), Gp(:,:), Gs(:,:)
+   ! integer :: j, ind, idim, ip, idx
+   ! real(dp) :: w, p, s, fx, sg, dB
+
+   ! allocate(Sp(np), Ss(np), Gp(np,ndim), Gs(np,ndim))
+   ! Sp = 0.0_dp;  Ss = 0.0_dp
+   ! Gp = 0.0_dp;  Gs = 0.0_dp
+
+   ! ! ---- Pass 1: scalars
+   ! do ind = 1, twotondim
+   ! do j = 1, np
+   !    idx = indp(j,ind)
+   !    w   = vol(j,ind)
+   !    Sp(j) = Sp(j) + phi(idx) * w
+   !    Ss(j) = Ss(j) + sf(idx)  * w
+   ! end do
+   ! end do
+
+   ! ! ---- Pass 2: gradients
+   ! do ind = 1, twotondim
+   ! do j = 1, np
+   !    idx = indp(j,ind)
+   !    w   = vol(j,ind)
+   !    do idim = 1, ndim
+   !       Gp(j,idim) = Gp(j,idim) + f(idx,idim)       * w
+   !       Gs(j,idim) = Gs(j,idim) + sf_grad(idx,idim) * w
+   !    end do
+   ! end do
+   ! end do
+
+   ! ! write to particles
+   ! dB = alphaB - alphaM
+   ! forcep(:,1)        = forcep(:,1)        + ( Ia*Sp + dB     *Ss )
+   ! forcep(:,2+ndim)   = forcep(:,2+ndim)   + ( Ia*Sp + alphaB  *Ss )
+   ! forcep(:,6+ndim)   = forcep(:,6+ndim)   + Ss
+
+   ! forcep(:,2:1+ndim) = forcep(:,2:1+ndim) + ( Ia*Gp + dB     *Gs )
+   ! forcep(:,6:5+ndim) = forcep(:,6:5+ndim) + ( Ia*Gp + alphaB *Gs )
+   ! forcep(:,10:9+ndim)= forcep(:,10:9+ndim)+ Gs
+
+   ! deallocate(Sp, Ss, Gp, Gs)
    !full nonlinear
+   do ind = 1,twotondim
+      do j = 1,np
+         forcep(ind_part(j),1) = forcep(ind_part(j),1) + (Ia*phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))*vol(j,ind) !phi
+         forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + (Ia*phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))*vol(j,ind) !psi
+         forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + (sf(indp(j,ind)))*vol(j,ind) !chi
 
-   ! temp accumulators
-   real(dp), allocatable :: Sp(:), Ss(:), Gp(:,:), Gs(:,:)
-   integer :: j, ind, idim, ip, idx
-   real(dp) :: w, p, s, fx, sg, dB
-
-   allocate(Sp(np), Ss(np), Gp(np,ndim), Gs(np,ndim))
-   Sp = 0.0_dp;  Ss = 0.0_dp
-   Gp = 0.0_dp;  Gs = 0.0_dp
-
-   ! ---- Pass 1: scalars
-   do ind = 1, twotondim
-   do j = 1, np
-      idx = indp(j,ind)
-      w   = vol(j,ind)
-      Sp(j) = Sp(j) + phi(idx) * w
-      Ss(j) = Ss(j) + sf(idx)  * w
-   end do
-   end do
-
-   ! ---- Pass 2: gradients
-   do ind = 1, twotondim
-   do j = 1, np
-      idx = indp(j,ind)
-      w   = vol(j,ind)
-      do idim = 1, ndim
-         Gp(j,idim) = Gp(j,idim) + f(idx,idim)       * w
-         Gs(j,idim) = Gs(j,idim) + sf_grad(idx,idim) * w
-      end do
-   end do
-   end do
-
-   ! write to particles
-   dB = alphaB - alphaM
-   forcep(:,1)        = forcep(:,1)        + ( Ia*Sp + dB     *Ss )
-   forcep(:,2+ndim)   = forcep(:,2+ndim)   + ( Ia*Sp + alphaB  *Ss )
-   forcep(:,6+ndim)   = forcep(:,6+ndim)   + Ss
-
-   forcep(:,2:1+ndim) = forcep(:,2:1+ndim) + ( Ia*Gp + dB     *Gs )
-   forcep(:,6:5+ndim) = forcep(:,6:5+ndim) + ( Ia*Gp + alphaB *Gs )
-   forcep(:,10:9+ndim)= forcep(:,10:9+ndim)+ Gs
-
-   deallocate(Sp, Ss, Gp, Gs)
-   !full nonlinear
-   ! do ind = 1,twotondim
-   !    do j = 1,np
-   !       forcep(ind_part(j),1) = forcep(ind_part(j),1) + (Ia*phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))*vol(j,ind) !phi
-   !       forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + (Ia*phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))*vol(j,ind) !psi
-   !       forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + (sf(indp(j,ind)))*vol(j,ind) !chi
-
-   !       do idim=1,ndim
-   !          forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + (Ia*f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad phi without fifth force (lapinv source)
-   !          forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+5) + (Ia*f(indp(j,ind),idim) + alphaB*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad psi
-   !          forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+9) + sf_grad(indp(j,ind),idim)*vol(j,ind) !grad chi
-   !       end do
+         do idim=1,ndim
+            forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + (Ia*f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad phi without fifth force (lapinv source)
+            forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+5) + (Ia*f(indp(j,ind),idim) + alphaB*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad psi
+            forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+9) + sf_grad(indp(j,ind),idim)*vol(j,ind) !grad chi
+         end do
          
-   !    end do
-   !    end do
+      end do
+      end do
 
    else
          ! linearised
