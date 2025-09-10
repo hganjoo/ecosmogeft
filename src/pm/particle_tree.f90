@@ -651,7 +651,7 @@ subroutine virtual_tree_fine(ilevel)
 #endif
 
 #ifdef OUTPUT_EXTRADOF_PART
-   dim_forcep = 12
+   dim_forcep = 3+3*ndim
 #endif
 
 #ifndef WITHOUTMPI
@@ -889,7 +889,7 @@ subroutine fill_comm(ind_part,ind_com,ind_list,np,ilevel,icpu)
   end if
 
 #ifdef OUTPUT_EXTRADOF_PART
-   dim_forcep = 12
+   dim_forcep = 3+3*ndim
    idim2=1
    if(star.or.sink) then
       idim2=2

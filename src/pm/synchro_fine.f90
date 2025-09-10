@@ -131,6 +131,11 @@ subroutine sync(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
   integer ,dimension(1:nvector,1:twotondim),save::igrid,icell,indp,kg
   real(dp),dimension(1:3)::skip_loc
   real(dp) :: f0,f1,f2
+#ifdef OUTPUT_EXTRADOF_PART
+   real(dp), allocatable, dimension(:), save::sf0, phi0
+   real(dp), allocatable, dimension(:, :), save::f5, phi_grad
+   real(dp)::coef
+#endif
 
   ! Mesh spacing in that level
   dx=0.5D0**ilevel
@@ -391,125 +396,106 @@ subroutine sync(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
 
 #ifdef OUTPUT_EXTRADOF_PART
 
-forcep = 0.0
+   coef = alphaB - alphaM
 
-if (eft) then
+   allocate (phi0(1:nvector))
+   phi0(1:np) = 0.0D0
 
-   if (.not. eftlin) then
-   ! !full nonlinear
+   allocate (phi_grad(1:nvector,1:ndim))
+   phi_grad(1:np,1:ndim) = 0.0D0
 
-   ! ! temp accumulators
-   ! real(dp), allocatable :: Sp(:), Ss(:), Gp(:,:), Gs(:,:)
-   ! integer :: j, ind, idim, ip, idx
-   ! real(dp) :: w, p, s, fx, sg, dB
+   do ind = 1, twotondim
+      do j = 1, np
+         phi0(j) = phi0(j) + phi(indp(j, ind))*vol(j, ind)
+      end do
+   end do
 
-   ! allocate(Sp(np), Ss(np), Gp(np,ndim), Gs(np,ndim))
-   ! Sp = 0.0_dp;  Ss = 0.0_dp
-   ! Gp = 0.0_dp;  Gs = 0.0_dp
-
-   ! ! ---- Pass 1: scalars
-   ! do ind = 1, twotondim
-   ! do j = 1, np
-   !    idx = indp(j,ind)
-   !    w   = vol(j,ind)
-   !    Sp(j) = Sp(j) + phi(idx) * w
-   !    Ss(j) = Ss(j) + sf(idx)  * w
-   ! end do
-   ! end do
-
-   ! ! ---- Pass 2: gradients
-   ! do ind = 1, twotondim
-   ! do j = 1, np
-   !    idx = indp(j,ind)
-   !    w   = vol(j,ind)
-   !    do idim = 1, ndim
-   !       Gp(j,idim) = Gp(j,idim) + f(idx,idim)       * w
-   !       Gs(j,idim) = Gs(j,idim) + sf_grad(idx,idim) * w
-   !    end do
-   ! end do
-   ! end do
-
-   ! ! write to particles
-   ! dB = alphaB - alphaM
-   ! forcep(:,1)        = forcep(:,1)        + ( Ia*Sp + dB     *Ss )
-   ! forcep(:,2+ndim)   = forcep(:,2+ndim)   + ( Ia*Sp + alphaB  *Ss )
-   ! forcep(:,6+ndim)   = forcep(:,6+ndim)   + Ss
-
-   ! forcep(:,2:1+ndim) = forcep(:,2:1+ndim) + ( Ia*Gp + dB     *Gs )
-   ! forcep(:,6:5+ndim) = forcep(:,6:5+ndim) + ( Ia*Gp + alphaB *Gs )
-   ! forcep(:,10:9+ndim)= forcep(:,10:9+ndim)+ Gs
-
-   ! deallocate(Sp, Ss, Gp, Gs)
-   !full nonlinear
    do ind = 1,twotondim
       do j = 1,np
-         forcep(ind_part(j),1) = forcep(ind_part(j),1) + (Ia*phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))*vol(j,ind) !phi
-         forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + (Ia*phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))*vol(j,ind) !psi
-         forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + (sf(indp(j,ind)))*vol(j,ind) !chi
-
-         do idim=1,ndim
-            forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + (Ia*f(indp(j,ind),idim) + (alphaB-alphaM)*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad phi without fifth force (lapinv source)
-            forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+5) + (Ia*f(indp(j,ind),idim) + alphaB*sf_grad(indp(j,ind),idim))*vol(j,ind) !grad psi
-            forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+9) + sf_grad(indp(j,ind),idim)*vol(j,ind) !grad chi
+         do idim = 1,ndim
+            phi_grad(j,idim) = phi_grad(j,idim) + f(indp(j,ind),idim)*vol(j,ind)
          end do
-         
-      end do
-      end do
+      end do 
+   end do
 
-   else
-         ! linearised
-         do ind = 1,twotondim
-            do j = 1,np
-               forcep(ind_part(j),1) = forcep(ind_part(j),1) + Ia*mu_phi*phi(indp(j,ind))*vol(j,ind) !phi
-               !forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + Ia*(1 + alphaB*xiv/nuv)*phi(indp(j,ind))*vol(j,ind) !psi
-               !forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + Ia*(xiv/nuv)*phi(indp(j,ind))*vol(j,ind) !chi
+   if (eft .and. .not.eftlin) then
 
-               do idim=1,ndim
-                  forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + Ia*mu_phi*f(indp(j,ind),idim)*vol(j,ind) !grad phi
-                  !forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+5) + Ia*(1 + alphaB*xiv/nuv)*f(indp(j,ind),idim)*vol(j,ind) !grad psi
-                  !forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+9) + Ia*(xiv/nuv)*f(indp(j,ind),idim)*vol(j,ind) !grad chi
-               end do
-               
-            end do
-            end do
+      allocate (f5(1:nvector, 1:ndim))
+      allocate (sf0(1:nvector))
 
-         forcep(:,2+ndim) = forcep(:,1)*mu_psi/mu_phi
-         forcep(:,6+ndim) = forcep(:,1)*mu_chi/mu_phi
+      f5(1:np, 1:ndim) = 0.0D0
+      sf0(1:np) = 0.0D0
 
-         do idim=1,ndim
-            forcep(:,idim+5) = forcep(:,idim+1)*mu_psi/mu_phi
-            forcep(:,idim+9) = forcep(:,idim+1)*mu_chi/mu_phi
+      do ind = 1, twotondim
+         do j = 1, np
+            sf0(j) = sf0(j) + sf(indp(j, ind))*vol(j, ind)
          end do
+      end do
 
-
+      do ind = 1,twotondim
+         do j = 1,np
+            do idim = 1,ndim
+               f5(j,idim) = f5(j,idim) + sf_grad(indp(j,ind),idim)*vol(j,ind)
+            end do
+         end do 
+      end do
+   
    end if
 
-else
+   ! record force
 
-! LCDM
-do ind = 1,twotondim
-   do j = 1,np
-      forcep(ind_part(j),1) = forcep(ind_part(j),1) + phi(indp(j,ind))*vol(j,ind) !phi
-      !forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + phi(indp(j,ind))*vol(j,ind) !psi
-      !forcep(ind_part(j),6 + ndim) = forcep(ind_part(j),6 + ndim) + Ia*(xiv/nuv)*phi(indp(j,ind))*vol(j,ind) !chi
+   do j=1,np
 
-      do idim=1,ndim
-         forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + f(indp(j,ind),idim)*vol(j,ind) !grad phi
-         !forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+5) + f(indp(j,ind),idim)*vol(j,ind) !grad psi
-         !forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+6) + Ia*(xiv/nuv)*phi(indp(j,ind))*vol(j,ind) !grad chi
-      end do
-      
-   end do
-   end do
+      if (eftlin .and. eft) then
 
-forcep(:,2+ndim) = forcep(:,1)
+         forcep(ind_part(j),1) = Ia*mu_phi*phi0(j)
+         forcep(ind_part(j),2) = Ia*mu_phi*phi_grad(j,1)
+         forcep(ind_part(j),3) = Ia*mu_phi*phi_grad(j,2)
+         forcep(ind_part(j),4) = Ia*mu_phi*phi_grad(j,3)
 
-do idim=1,ndim
-   forcep(:,idim+5) = forcep(:,idim+1)
-end do
+         forcep(ind_part(j),5) = Ia*mu_psi*phi0(j)
+         forcep(ind_part(j),6) = Ia*mu_psi*phi_grad(j,1)
+         forcep(ind_part(j),7) = Ia*mu_psi*phi_grad(j,2)
+         forcep(ind_part(j),8) = Ia*mu_psi*phi_grad(j,3)
 
+         forcep(ind_part(j),9) = Ia*mu_chi*phi0(j)
+         forcep(ind_part(j),10) = Ia*mu_chi*phi_grad(j,1)
+         forcep(ind_part(j),11) = Ia*mu_chi*phi_grad(j,2)
+         forcep(ind_part(j),12) = Ia*mu_chi*phi_grad(j,3)
 
-end if
+      else if (.not.eftlin .and. .not.eft) then
+
+         forcep(ind_part(j),1) = phi0(j)
+         forcep(ind_part(j),2) = phi_grad(j,1)
+         forcep(ind_part(j),3) = phi_grad(j,2)
+         forcep(ind_part(j),4) = phi_grad(j,3)
+
+         forcep(ind_part(j),5) = phi0(j)
+         forcep(ind_part(j),6) = phi_grad(j,1)
+         forcep(ind_part(j),7) = phi_grad(j,2)
+         forcep(ind_part(j),8) = phi_grad(j,3)
+
+         forcep(ind_part(j),9) = 0.0d0
+         forcep(ind_part(j),10) = 0.0d0
+         forcep(ind_part(j),11) = 0.0d0
+         forcep(ind_part(j),12) = 0.0d0
+
+      else
+
+         forcep(ind_part(j),1) = Ia*phi0(j) + coef*sf0(j)
+         forcep(ind_part(j),2) = Ia*phi_grad(j,1) + coef*f5(j,1)
+         forcep(ind_part(j),3) = Ia*phi_grad(j,2) + coef*f5(j,2)
+         forcep(ind_part(j),4) = Ia*phi_grad(j,3) + coef*f5(j,3)
+
+         forcep(ind_part(j),5) = Ia*phi0(j) + alphaB*sf0(j)
+         forcep(ind_part(j),6) = Ia*phi_grad(j,1) + alphaB*f5(j,1)
+         forcep(ind_part(j),7) = Ia*phi_grad(j,2) + alphaB*f5(j,2)
+         forcep(ind_part(j),8) = Ia*phi_grad(j,3) + alphaB*f5(j,3)
+
+         forcep(ind_part(j),9) = sf0(j)
+         forcep(ind_part(j),10) = f5(j,1)
+         forcep(ind_part(j),11) = f5(j,2)
+         forcep(ind_part(j),12) = f5(j,3)
 
 #endif
 
@@ -569,6 +555,14 @@ end if
         end do
      end do
   end if
+
+#ifdef OUTPUT_EXTRADOF_PART
+   if (allocated(f5)) deallocate (f5)
+   if (allocated(sf0)) deallocate (sf0)
+
+   if (allocated(phi0)) deallocate (phi0)
+   if (allocated(phi_grad)) deallocate (phi_grad)
+#endif
 
 end subroutine sync
 
@@ -910,52 +904,9 @@ forcep = 0.0
 if (eft) then
 
    if (.not. eftlin) then
-   ! !full nonlinear
-
-   ! ! temp accumulators
-   ! real(dp), allocatable :: Sp(:), Ss(:), Gp(:,:), Gs(:,:)
-   ! integer :: j, ind, idim, ip, idx
-   ! real(dp) :: w, p, s, fx, sg, dB
-
-   ! allocate(Sp(np), Ss(np), Gp(np,ndim), Gs(np,ndim))
-   ! Sp = 0.0_dp;  Ss = 0.0_dp
-   ! Gp = 0.0_dp;  Gs = 0.0_dp
-
-   ! ! ---- Pass 1: scalars
-   ! do ind = 1, twotondim
-   ! do j = 1, np
-   !    idx = indp(j,ind)
-   !    w   = vol(j,ind)
-   !    Sp(j) = Sp(j) + phi(idx) * w
-   !    Ss(j) = Ss(j) + sf(idx)  * w
-   ! end do
-   ! end do
-
-   ! ! ---- Pass 2: gradients
-   ! do ind = 1, twotondim
-   ! do j = 1, np
-   !    idx = indp(j,ind)
-   !    w   = vol(j,ind)
-   !    do idim = 1, ndim
-   !       Gp(j,idim) = Gp(j,idim) + f(idx,idim)       * w
-   !       Gs(j,idim) = Gs(j,idim) + sf_grad(idx,idim) * w
-   !    end do
-   ! end do
-   ! end do
-
-   ! ! write to particles
-   ! dB = alphaB - alphaM
-   ! forcep(:,1)        = forcep(:,1)        + ( Ia*Sp + dB     *Ss )
-   ! forcep(:,2+ndim)   = forcep(:,2+ndim)   + ( Ia*Sp + alphaB  *Ss )
-   ! forcep(:,6+ndim)   = forcep(:,6+ndim)   + Ss
-
-   ! forcep(:,2:1+ndim) = forcep(:,2:1+ndim) + ( Ia*Gp + dB     *Gs )
-   ! forcep(:,6:5+ndim) = forcep(:,6:5+ndim) + ( Ia*Gp + alphaB *Gs )
-   ! forcep(:,10:9+ndim)= forcep(:,10:9+ndim)+ Gs
-
-   ! deallocate(Sp, Ss, Gp, Gs)
+   
    !full nonlinear
-   do ind = 1,twotondim
+   do ind = 1,threetondim
       do j = 1,np
          forcep(ind_part(j),1) = forcep(ind_part(j),1) + (Ia*phi(indp(j,ind)) + (alphaB-alphaM)*sf(indp(j,ind)))*vol(j,ind) !phi
          forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + (Ia*phi(indp(j,ind)) + alphaB*sf(indp(j,ind)))*vol(j,ind) !psi
@@ -971,8 +922,9 @@ if (eft) then
       end do
 
    else
+   if (myid==1) write(*,*) 'Lin summing'
          ! linearised
-         do ind = 1,twotondim
+         do ind = 1,threetondim
             do j = 1,np
                forcep(ind_part(j),1) = forcep(ind_part(j),1) + Ia*mu_phi*phi(indp(j,ind))*vol(j,ind) !phi
                !forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + Ia*(1 + alphaB*xiv/nuv)*phi(indp(j,ind))*vol(j,ind) !psi
@@ -987,12 +939,13 @@ if (eft) then
             end do
             end do
 
-         forcep(:,2+ndim) = forcep(:,1)*mu_psi/mu_phi
-         forcep(:,6+ndim) = forcep(:,1)*mu_chi/mu_phi
-
-         do idim=1,ndim
-            forcep(:,idim+5) = forcep(:,idim+1)*mu_psi/mu_phi
-            forcep(:,idim+9) = forcep(:,idim+1)*mu_chi/mu_phi
+         do j=1,np
+            forcep(ind_part(j),2+ndim) = forcep(ind_part(j),1)*mu_psi/mu_phi
+            forcep(ind_part(j),6+ndim) = forcep(ind_part(j),1)*mu_chi/mu_phi
+            do idim=1,ndim
+               forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+1)*mu_psi/mu_phi
+               forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+1)*mu_psi/mu_phi
+            end do
          end do
 
 
@@ -1001,7 +954,8 @@ if (eft) then
 else
 
 ! LCDM
-do ind = 1,twotondim
+if (myid==1) write(*,*) 'LCDM summing'
+do ind = 1,threetondim
    do j = 1,np
       forcep(ind_part(j),1) = forcep(ind_part(j),1) + phi(indp(j,ind))*vol(j,ind) !phi
       !forcep(ind_part(j),2 + ndim) = forcep(ind_part(j),2 + ndim) + phi(indp(j,ind))*vol(j,ind) !psi
@@ -1009,6 +963,7 @@ do ind = 1,twotondim
 
       do idim=1,ndim
          forcep(ind_part(j),idim+1) = forcep(ind_part(j),idim+1) + f(indp(j,ind),idim)*vol(j,ind) !grad phi
+         
          !forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+5) + f(indp(j,ind),idim)*vol(j,ind) !grad psi
          !forcep(ind_part(j),idim+9) = forcep(ind_part(j),idim+6) + Ia*(xiv/nuv)*phi(indp(j,ind))*vol(j,ind) !grad chi
       end do
@@ -1016,14 +971,16 @@ do ind = 1,twotondim
    end do
    end do
 
-forcep(:,2+ndim) = forcep(:,1)
-
-do idim=1,ndim
-   forcep(:,idim+5) = forcep(:,idim+1)
+do j=1,np
+   forcep(ind_part(j),2+ndim) = forcep(ind_part(j),1)
+   do idim=1,ndim
+      forcep(ind_part(j),idim+5) = forcep(ind_part(j),idim+1)
+   end do
 end do
 
 
 end if
+
 
 #endif
 
