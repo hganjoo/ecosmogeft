@@ -74,6 +74,8 @@ contains
     nuv = -1*C2 -alphaB*(xiv - alphaM)
 
     mu_phi = 1 + xiv*xiv/nuv
+    mu_psi = 1 + alphaB*xiv/nuv
+    mu_chi = xiv/nuv
 
     pv = alphaB * (2.0d0 * alphaM - alphaB) - C2
     qv = -1.0d0*(alphaM - alphaB)

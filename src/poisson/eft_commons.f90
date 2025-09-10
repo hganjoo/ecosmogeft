@@ -4,6 +4,6 @@ module eft_commons
   use amr_parameters
 
 
-  real(dp) :: alphaB, alphaM, C2, C4, Ia, Hv, pv, rv, qv, mu_phi, xiv,nuv
+  real(dp) :: alphaB, alphaM, C2, C4, Ia, Hv, pv, rv, qv, mu_phi, xiv,nuv,mu_psi,mu_chi
 
 end module eft_commons
