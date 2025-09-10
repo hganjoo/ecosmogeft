@@ -634,6 +634,7 @@ subroutine virtual_tree_fine(ilevel)
   integer::ip,ipcom,npart1,icpu,ncache
   integer::info,buf_count,tag=101,tagf=102,tagu=102
   integer::countsend,countrecv
+  integer::dim_forcep
 #ifndef WITHOUTMPI
   integer,dimension(MPI_STATUS_SIZE,2*ncpu)::statuses
   integer,dimension(2*ncpu)::reqsend,reqrecv
@@ -647,6 +648,10 @@ subroutine virtual_tree_fine(ilevel)
 
 #ifdef WITHOUTMPI
   return
+#endif
+
+#ifdef OUTPUT_EXTRADOF_PART
+   dim_forcep = 12
 #endif
 
 #ifndef WITHOUTMPI
@@ -848,7 +853,7 @@ subroutine fill_comm(ind_part,ind_com,ind_list,np,ilevel,icpu)
   implicit none
   integer::np,ilevel,icpu
   integer,dimension(1:nvector)::ind_part,ind_com,ind_list
-  
+  integer::dim_forcep
   integer::i,idim
   logical,dimension(1:nvector),save::ok=.true.
 
@@ -882,6 +887,17 @@ subroutine fill_comm(ind_part,ind_com,ind_list,np,ilevel,icpu)
         end do
      end if
   end if
+
+#ifdef OUTPUT_EXTRADOF_PART
+   dim_forcep = 12
+
+   do idim=1,dim_forcep
+     do i=1,np
+        reception(icpu,ilevel)%up(ind_com(i),twondim+idim2+idim)=forcep(ind_part(i),idim)
+     end do
+  end do
+
+#endif
   
   ! Remove particles from parent linked list
   call remove_list(ind_part,ind_list,ok,np)
@@ -943,6 +959,16 @@ subroutine empty_comm(ind_com,np,ilevel,icpu)
         end do
      end if
   end if
+
+#ifdef OUTPUT_EXTRADOF_PART
+   dim_forcep = 12
+   do idim=1,dim_forcep
+     do i=1,np
+        forcep(ind_part(i),idim)=emission(icpu,ilevel)%up(ind_com(i),twondim+idim2+idim)
+     end do
+  end do
+#endif
+
 
 end subroutine empty_comm
 !################################################################

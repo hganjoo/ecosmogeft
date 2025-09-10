@@ -54,9 +54,14 @@ subroutine add_free(ind_part,np)
   do idim=1,ndim
      do j=1,np
         xp(ind_part(j),idim)=0.0
-        vp(ind_part(j),idim)=0.0
+        vp(ind_part(j),idim)=0.0 
      end do
   end do
+#ifdef OUTPUT_EXTRADOF_PART
+   do j=1,np
+      forcep(ind_part(j),1:3*ndim + 3) = 0.0
+   end do
+#endif
   do j=1,np
      mp(ind_part(j))=0.0
      idp(ind_part(j))=0
@@ -118,6 +123,11 @@ subroutine add_free_cond(ind_part,ok,np)
         endif
      end do
   end do
+#ifdef OUTPUT_EXTRADOF_PART
+   do j=1,np
+      forcep(ind_part(j),1:3*ndim + 3) = 0.0
+   end do
+#endif
   do j=1,np
      if(ok(j))then
         mp(ind_part(j))=0.0
