@@ -652,6 +652,8 @@ subroutine virtual_tree_fine(ilevel)
 
 #ifdef OUTPUT_EXTRADOF_PART
    dim_forcep = 3+3*ndim
+#else
+   dim_forcep = 0
 #endif
 
 #ifndef WITHOUTMPI
@@ -673,12 +675,12 @@ subroutine virtual_tree_fine(ilevel)
         allocate(reception(icpu,ilevel)%fp(1:ncache,1:3))
         if(star.or.sink)then
            if(metal)then
-              allocate(reception(icpu,ilevel)%up(1:ncache,1:twondim+3))
+              allocate(reception(icpu,ilevel)%up(1:ncache,1:twondim+3+dim_forcep))
            else
-              allocate(reception(icpu,ilevel)%up(1:ncache,1:twondim+2))
+              allocate(reception(icpu,ilevel)%up(1:ncache,1:twondim+2+dim_forcep))
            endif
         else
-           allocate(reception(icpu,ilevel)%up(1:ncache,1:twondim+1))
+           allocate(reception(icpu,ilevel)%up(1:ncache,1:twondim+1+dim_forcep))
         end if
      end if
   end do
@@ -725,12 +727,12 @@ subroutine virtual_tree_fine(ilevel)
         allocate(emission(icpu,ilevel)%fp(1:ncache,1:3))
         if(star.or.sink)then
            if(metal)then
-              allocate(emission(icpu,ilevel)%up(1:ncache,1:twondim+3))
+              allocate(emission(icpu,ilevel)%up(1:ncache,1:twondim+3+dim_forcep))
            else
-              allocate(emission(icpu,ilevel)%up(1:ncache,1:twondim+2))
+              allocate(emission(icpu,ilevel)%up(1:ncache,1:twondim+2+dim_forcep))
            endif
         else
-           allocate(emission(icpu,ilevel)%up(1:ncache,1:twondim+1))
+           allocate(emission(icpu,ilevel)%up(1:ncache,1:twondim+1+dim_forcep))
         end if
      end if
   end do
@@ -747,12 +749,12 @@ subroutine virtual_tree_fine(ilevel)
              & tagf,MPI_COMM_WORLD,reqrecv(countrecv),info)
         if(star.or.sink)then
            if(metal)then
-              buf_count=ncache*(twondim+3)
+              buf_count=ncache*(twondim+3+dim_forcep)
            else
-              buf_count=ncache*(twondim+2)
+              buf_count=ncache*(twondim+2+dim_forcep)
            endif
         else
-           buf_count=ncache*(twondim+1)
+           buf_count=ncache*(twondim+1+dim_forcep)
         endif
         countrecv=countrecv+1
         call MPI_IRECV(emission(icpu,ilevel)%up,buf_count, &
@@ -773,12 +775,12 @@ subroutine virtual_tree_fine(ilevel)
              & tagf,MPI_COMM_WORLD,reqsend(countsend),info)
         if(star.or.sink)then
            if(metal)then
-              buf_count=ncache*(twondim+3)
+              buf_count=ncache*(twondim+3+dim_forcep)
            else
-              buf_count=ncache*(twondim+2)
+              buf_count=ncache*(twondim+2+dim_forcep)
            endif
         else
-           buf_count=ncache*(twondim+1)
+           buf_count=ncache*(twondim+1+dim_forcep)
         endif
         countsend=countsend+1
         call MPI_ISEND(reception(icpu,ilevel)%up,buf_count, &

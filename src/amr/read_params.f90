@@ -156,9 +156,7 @@ if (myid==1) write(*,*) "LCDM selected."
 end if
 
 #ifdef OUTPUT_EXTRADOF_PART
-if (eft) then
-if (myid==1) write(*,*) 'EFT full outputs switched on.'
-end if
+if (myid==1) write(*,*) 'Full field outputs switched on.'
 #endif
   !-------------------------------------------------
   ! Compute time step for outputs

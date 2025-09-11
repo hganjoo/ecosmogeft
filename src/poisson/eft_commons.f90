@@ -5,8 +5,6 @@ module eft_commons
 
 
   real(dp) :: alphaB, alphaM, C2, C4, Ia, Hv, pv, rv, qv, mu_phi, xiv,nuv,mu_psi,mu_chi
-  mu_phi = 1.0d0
-  mu_psi = 1.0d0
-  mu_chi = 0.0d0
+  
 
 end module eft_commons

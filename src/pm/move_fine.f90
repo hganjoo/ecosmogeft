@@ -508,6 +508,8 @@ subroutine move1(ind_grid,ind_part,ind_grid_part,ng,np,ilevel)
          forcep(ind_part(j),10) = f5(j,1)
          forcep(ind_part(j),11) = f5(j,2)
          forcep(ind_part(j),12) = f5(j,3)
+   end if
+   end do
 
 #endif
 
