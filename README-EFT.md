@@ -23,7 +23,7 @@ Namelist examples are provided in the namelist/ folder.
 
 - alphaB0 = braiding parameter at a = 1
 - alphaM0 = running of Planck mass at a = 1
-- w0, wa = DE EoS params
+- w0, wa = DE EoS params (still in testing)
 - npre, npost = pre and post smoothing cycles for EFT solver
 
 ## Output options:
@@ -37,5 +37,5 @@ If eflin=.true., the code will output the same fields, but these have no meaning
 
 ## Compile time directory-making:
 
-If compiled with -DNMKDIR, directories are not created by the code. You will have to create the output directory structure before running the simulation.
+If compiled with -DWITHOUTMKDIR, directories are not created by the code. You will have to create the output directory structure before running the simulation.
 
