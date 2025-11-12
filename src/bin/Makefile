@@ -18,7 +18,7 @@ F90 = mpif90 -O3 -g -ffree-line-length-none
 #F90 = mpif90 -C -g -traceback -O3 -warn all -warn nounused -DWITHOUTMKDIR -DWITHBCASTPARAMS
 #F90 = mpif90 -warn all -warn nounused -g -traceback -check all -ftrapuv -C -DWITHOUTMKDIR -DWITHBCASTPARAMS
 #F90 = mpif90 -g -traceback -O3 -DWITHOUTMKDIR -DWITHBCASTPARAMS
-FFLAGS = -cpp -DNDIM=$(NDIM) -DNPRE=$(NPRE) -DSOLVER$(SOLVER) -DOLDINTERP
+FFLAGS = -cpp -DNDIM=$(NDIM) -DNPRE=$(NPRE) -DSOLVER$(SOLVER) -DOLDINTERP -DNVECTOR=$(NVECTOR) -DNVAR=$(NVAR)
 
 # --- No MPI, gfortran -------------------------------
 #F90 = gfortran -O3 -frecord-marker=4 -fbacktrace -ffree-line-length-none -g
