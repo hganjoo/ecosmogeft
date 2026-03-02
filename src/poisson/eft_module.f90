@@ -13,7 +13,7 @@ contains
     !implicit none
 
     ! Local variables
-    real(dp) :: evt, om_ma, HdotbyH2, abdot
+    real(dp) :: evt, evprime, D, om_ma, HdotbyH2, abdot
     real(dp) :: tmp1, tmp2
     real(dp) :: integral, h
     integer :: i, npts
@@ -40,12 +40,19 @@ contains
     HdotbyH2 = -1.5_dp * om_ma
 
     ! Step 4: abdot
-    tmp1 = 3.0_dp * evt * omega_l * wa
-    tmp2 = 3.0_dp * evt * omega_l * (w0 + wa) / aexp
-    abdot = omega_m * (tmp1 - tmp2)
-    abdot = abdot / ((evt * omega_l + omega_m)**2)
-    abdot = abdot / (1.0_dp - omega_m)
-    abdot = abdot * alphaB0 * aexp
+    ! --- Ev(a) for CPL w(a)=w0+wa(1-a)
+    evt = aexp**(-3.0_dp*(1.0_dp + w0 + wa)) * exp(-3.0_dp*wa*(1.0_dp - aexp))
+
+    ! derivative dEv/da = Ev * d(ln Ev)/da
+    ! ln Ev = -3(1+w0+wa) ln a -3 wa(1-a)
+    ! d(ln Ev)/da = -3(1+w0+wa)/a + 3 wa
+    
+    evprime = evt * ( -3.0_dp*(1.0_dp + w0 + wa)/aexp + 3.0_dp*wa )
+
+    D = omega_m + omega_l * evt * aexp**3
+
+    abdot = (alphaB0 / (1.0_dp - omega_m)) * (omega_m * omega_l) * &
+        ( aexp**4 * evprime + 3.0_dp * aexp**3 * evt ) / (D*D)
 
     ! Step 5: Ia integral
     npts = 100
@@ -64,10 +71,10 @@ contains
     Ia = exp(-1.0_dp*integral)
 
     ! Step 6: C2 and C4
-    !C2 = -alphaM + alphaB * (1.0_dp + alphaM) + (1.0_dp + alphaB) * HdotbyH2 + abdot + 1.5_dp * Ia * omega_m / (aexp**3 * Hv**2)
-    C2 = -alphaM + alphaB*(1.0_dp + alphaM) + (1.0_dp + alphaB)*HdotbyH2 &
-     + (3.0_dp*aexp**3 * alphaB0 * omega_m) / (aexp**3 * (1.0_dp - omega_m) + omega_m)**2 &
-     + aexp**(-3.0_dp) * 1.5_dp * Ia * omega_m / (Hv**2)
+    C2 = -alphaM + alphaB * (1.0_dp + alphaM) + (1.0_dp + alphaB) * HdotbyH2 + abdot + 1.5_dp * Ia * omega_m / (aexp**3 * Hv**2)
+    !C2 = -alphaM + alphaB*(1.0_dp + alphaM) + (1.0_dp + alphaB)*HdotbyH2 &
+    ! + (3.0_dp*aexp**3 * alphaB0 * omega_m) / (aexp**3 * (1.0_dp - omega_m) + omega_m)**2 &
+    ! + aexp**(-3.0_dp) * 1.5_dp * Ia * omega_m / (Hv**2)
     C4 = -4.0_dp * alphaB + 2.0_dp * alphaM
 
     xiv = alphaB - alphaM
