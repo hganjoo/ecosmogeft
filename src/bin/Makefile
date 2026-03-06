@@ -14,7 +14,7 @@ DEFINES = -DNVECTOR=$(NVECTOR) -DNDIM=$(NDIM) -DNPRE=$(NPRE) -DNVAR=$(NVAR) -DSO
 # Fortran compiler options and directives
 
 # --- MPI, infinity ------------------------------
-F90 = mpif90 -O3 -g -ffree-line-length-none
+#F90 = mpif90 -O3 -g -ffree-line-length-none
 #F90 = mpif90 -C -g -traceback -O3 -warn all -warn nounused -DWITHOUTMKDIR -DWITHBCASTPARAMS
 #F90 = mpif90 -warn all -warn nounused -g -traceback -check all -ftrapuv -C -DWITHOUTMKDIR -DWITHBCASTPARAMS
 #F90 = mpif90 -g -traceback -O3 -DWITHOUTMKDIR -DWITHBCASTPARAMS
@@ -22,8 +22,8 @@ FFLAGS = -cpp -DNDIM=$(NDIM) -DNPRE=$(NPRE) -DSOLVER$(SOLVER) -DOLDINTERP -DNVEC
 
 # --- No MPI, gfortran -------------------------------
 #F90 = gfortran -O3 -frecord-marker=4 -fbacktrace -ffree-line-length-none -g
-#FFLAGS = -x f95-cpp-input $(DEFINES) -DWITHOUTMPI
-
+FFLAGS = $(DEFINES) -DWITHOUTMPI
+F90 = mpif90
 # --- No MPI, tau ----------------------------------
 #F90 = tau_f90.sh -optKeepFiles -optPreProcess -optCPPOpts=$(DEFINES) -DWITHOUTMPI
 

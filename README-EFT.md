@@ -21,10 +21,12 @@ Namelist examples are provided in the namelist/ folder.
 
 ### EFT params:
 
-- alphaB0 = braiding parameter at a = 1
-- alphaM0 = running of Planck mass at a = 1
-- w0, wa = DE EoS params (still in testing)
-- npre, npost = pre and post smoothing cycles for EFT solver
+- alphaB0: braiding parameter at a = 1
+- alphaM0: running of Planck mass at a = 1
+- w0, wa: DE EoS params for CPL parameterisation w(a) = w_0 + (1-a)w_a
+- npre, npost: pre and post smoothing cycles for EFT solver
+- scaling: 'de' (proportional to Omega_DE / Omega_DE0) or 'a' (proportional to scale factor)
+- nb,nm: exponents for the alpha-scaling.
 
 ## Output options:
 

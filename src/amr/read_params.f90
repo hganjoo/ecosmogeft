@@ -154,7 +154,8 @@ if (eft) then
    write(*,'("  alphaB0 = ",F6.3,", alphaM0 = ",F6.3)') alphaB0, alphaM0
    write(*,'("  w0 = ",F6.3,", wa = ",F6.3)') w0, wa
    write(*,'("  npre = ",I3,", npost = ",I3)') npre, npost
-   write(*,'("  scaling = ",A,", nb = ",F6.3,", nm = ",F6.3)') scaling, nb, nm
+   write(*,'("  scaling = ",A)') scaling
+   write(*,'("  nb = ",F6.3,", nm = ",F6.3)') nb, nm
 endif
 !if (myid==1) write(*,'(" EFT params: alphaB0 = ",F6.3,", alphaM0 = ",F6.3,", w0 = ",F6.3,", wa = ",F6.3,", npre = ",I3,", npost = ",I3)') alphaB0, alphaM0, w0, wa, npre, npost
 if (eftlin .and. myid==1) write(*,*) "Linearised EFT selected."

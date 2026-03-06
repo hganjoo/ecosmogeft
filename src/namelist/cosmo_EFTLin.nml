@@ -41,4 +41,7 @@ npre = 15
 npost = 3
 w0 = -1.0
 wa = 0.0
+scaling = 'de'
+nb = 1.0
+Nm = 1.0
 /
