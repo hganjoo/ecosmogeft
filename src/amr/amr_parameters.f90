@@ -146,12 +146,16 @@ module amr_parameters
 
   ! EFT params
 
-  real(dp) :: alphaB0 = -0.48
-  real(dp) :: alphaM0 = 0.0
-  integer :: npre = 5
-  integer :: npost = 5
-  real(dp) :: w0 = -1.0
-  real(dp) :: wa = 0.0
+  real(dp) :: alphaB0 = -0.48 ! Braiding parameter
+  real(dp) :: alphaM0 = 0.0 ! Planck mass run rate
+  integer :: npre = 5 ! Pre steps for extradof solver
+  integer :: npost = 5 ! Post steps for extradof solver
+  real(dp) :: w0 = -1.0 ! w0 in CPL DE w(a)
+  real(dp) :: wa = 0.0 ! wa in CPL DE w(a)
+  real(dp) :: nb = 1.0 ! power for alphaB scaling
+  real(dp) :: nm = 1.0 ! power for alphaM scaling
+  character(len=128) :: scaling='de' ! scaling version: propto "a" or "de"
+  
 
   logical ::self_shielding=.false.
   logical ::pressure_fix=.false.

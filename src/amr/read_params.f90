@@ -37,7 +37,7 @@ subroutine read_params
        & ,xcentre_frame,ycentre_frame,zcentre_frame &
        & ,deltax_frame,deltay_frame,deltaz_frame,movie &
        & ,imovout,imov,tendmov,aendmov
-   namelist/eft_params/alphaB0,alphaM0,npre,npost,w0,wa
+   namelist/eft_params/alphaB0,alphaM0,npre,npost,w0,wa,scaling,nb,nm
 
   ! MPI initialization
 #ifndef WITHOUTMPI
@@ -149,7 +149,14 @@ end if
 
 
 if (eft) then
-if (myid==1) write(*,'(" EFT params: alphaB0 = ",F6.3,", alphaM0 = ",F6.3,", w0 = ",F6.3,", wa = ",F6.3,", npre = ",I3,", npost = ",I3)') alphaB0, alphaM0, w0, wa, npre, npost
+   if (myid==1) then
+   write(*,'("EFT parameters:")')
+   write(*,'("  alphaB0 = ",F6.3,", alphaM0 = ",F6.3)') alphaB0, alphaM0
+   write(*,'("  w0 = ",F6.3,", wa = ",F6.3)') w0, wa
+   write(*,'("  npre = ",I3,", npost = ",I3)') npre, npost
+   write(*,'("  scaling = ",A,", nb = ",F6.3,", nm = ",F6.3)') scaling, nb, nm
+endif
+!if (myid==1) write(*,'(" EFT params: alphaB0 = ",F6.3,", alphaM0 = ",F6.3,", w0 = ",F6.3,", wa = ",F6.3,", npre = ",I3,", npost = ",I3)') alphaB0, alphaM0, w0, wa, npre, npost
 if (eftlin .and. myid==1) write(*,*) "Linearised EFT selected."
 else
 if (myid==1) write(*,*) "LCDM selected."
