@@ -91,7 +91,7 @@ contains
       else
           Ia = alphaM0 * log(aexp/a_min)
       end if
-
+      Ia = exp(-1.0_dp * Ia)
     else if (trim(scaling) == 'de') then
 
       npts = 100
