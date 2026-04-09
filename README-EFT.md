@@ -1,6 +1,6 @@
 # ECOSMOG-EFT
 
-Himanish Ganjoo - 11 Aug 2025
+Himanish Ganjoo - 9 Apr 2026
 
 Himanish.Ganjoo@obspm.fr
 
@@ -8,7 +8,7 @@ This code implements the Effective Field Theory of Dark Energy with cubic screen
 
 Adapted from the ECOSMOG-CVG code by Christoph Becker (https://github.com/Christovis/ecosmog-cvg). 
 
-EFT theory taken from Cusin et al (https://arxiv.org/abs/1712.02782). 
+EFT theory taken from [Cusin et al 2018](https://arxiv.org/abs/1712.02782). 
 
 Namelist examples are provided in the namelist/ folder. 
 
