@@ -8,13 +8,13 @@ NPRE = 8
 NVAR = 5
 SOLVER = hydro
 PATCH = 
-EXEC = ramses48_36_3_
+EXEC = ramseseft
 DEFINES = -DNVECTOR=$(NVECTOR) -DNDIM=$(NDIM) -DNPRE=$(NPRE) -DNVAR=$(NVAR) -DSOLVER$(SOLVER)
 #############################################################################
 # Fortran compiler options and directives
 
 # --- MPI, infinity ------------------------------
-#F90 = mpif90 -O3 -g -ffree-line-length-none
+F90 = mpif90 -O3 -g -ffree-line-length-none
 #F90 = mpif90 -C -g -traceback -O3 -warn all -warn nounused -DWITHOUTMKDIR -DWITHBCASTPARAMS
 #F90 = mpif90 -warn all -warn nounused -g -traceback -check all -ftrapuv -C -DWITHOUTMKDIR -DWITHBCASTPARAMS
 #F90 = mpif90 -g -traceback -O3 -DWITHOUTMKDIR -DWITHBCASTPARAMS
@@ -22,8 +22,8 @@ FFLAGS = -cpp -DNDIM=$(NDIM) -DNPRE=$(NPRE) -DSOLVER$(SOLVER) -DOLDINTERP -DNVEC
 
 # --- No MPI, gfortran -------------------------------
 #F90 = gfortran -O3 -frecord-marker=4 -fbacktrace -ffree-line-length-none -g
-FFLAGS = $(DEFINES) -DWITHOUTMPI
-F90 = mpif90
+#FFLAGS = $(DEFINES) -DWITHOUTMPI
+#F90 = mpif90
 # --- No MPI, tau ----------------------------------
 #F90 = tau_f90.sh -optKeepFiles -optPreProcess -optCPPOpts=$(DEFINES) -DWITHOUTMPI
 
