@@ -12,11 +12,6 @@ A open-source N-body simulation code for dark-matter only cosmological structure
 
 The code can simulate EFTofDE with Vainshtein screening (eft = True) or linearised EFTs (eft=True and eftlin=True). 
 
-### Note
-
-The EFTofDE component of this code has been tested heavily for `w0=-1` and `wa=0`, `scaling='de'` and `nb=1`,`nm=1`. The w0-wa cosmology and other scalings have not been rigorously tested. 
-
-
 Namelist examples are provided in the `namelist/` folder. 
 
 ## Parameters:
