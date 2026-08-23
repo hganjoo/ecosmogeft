@@ -5,7 +5,7 @@ Himanish.Ganjoo@obspm.fr
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![DOI](https://zenodo.org/badge/1023784423.svg)](https://doi.org/10.5281/zenodo.19494499)
-[![arXiv](https://img.shields.io/badge/arXiv-2007.03042%20-green.svg)](https://arxiv.org/abs/2604.15434)
+[![arXiv](https://img.shields.io/badge/arXiv-2604.15434%20-green.svg)](https://arxiv.org/abs/2604.15434)
 
 A open-source N-body simulation code for dark-matter only cosmological structure formation for cubic screening in the Effective Field Theory of Dark Energy. The model is taken from [Cusin et al 2018](https://arxiv.org/abs/1712.02782). It is implemented in a modified version of the [ECOSMOG-CVG](https://arxiv.org/abs/2007.03042) (code [here](https://github.com/Christovis/ecosmog-cvg)) which is based on ECOSMOG and [RAMSES](https://github.com/ramses-organisation/ramses). It uses adaptive mesh refinement and adaptive time integration to simulate self-gravitating fluids and is massively parallelizable as it makes use of the MPI communication library.
 
